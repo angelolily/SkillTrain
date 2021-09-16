@@ -1,0 +1,10 @@
+{
+    "require": {
+        "php": ">=7.4",
+        "overtrue/wechat": "^5.0",
+        "ext-fileinfo": "*",
+        "ext-openssl": "*",
+        "ext-json": "*",
+        "ext-curl": "*"
+    }
+}
