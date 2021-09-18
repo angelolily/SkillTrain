@@ -55,12 +55,64 @@ class Author
 	}
 
 
+	//判断验证中间件
+
 	public static function verifica()
 	{
 		$ss = $_SERVER['REQUEST_METHOD'];
 		if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 			http_data(200, [], self::$CI);
 		}
+
+		//判断是不是get类型，如果是先取redis，在走流程
+
+        $class = self::$CI->router->fetch_class();
+
+
+		//只针对get接口
+
+        if(substr($class,0,3)=="get"){
+            $resulArr = $dataArr = $receiveArr = [];//返回信息,解码json数据，接收信息
+            $receiveArr = file_get_contents('php://input');
+            $dataArr = json_decode($receiveArr, true);
+
+            if(count($dataArr)>0){
+
+                $rk=arrayKJoinV($dataArr);
+
+                foreach ($dataArr as $key=>$value)
+                {
+
+                    $rk=$rk.$key.$value;
+
+                }
+
+                $valueDate=RedisGet($rk);
+
+                if ($valueDate) {
+                    $statue = 200;
+                    $resulInfo['success'] = true;
+                    $resulInfo['msg'] = "查询成功";
+                    $resulInfo['Data']=$valueDate;
+
+                    http_data($statue, $resulInfo, self::$CI);
+
+                }
+                else{
+                    $_POST['rk']="";
+                    $_POST['rk']=$rk;
+                }
+
+            }
+        }
+
+
+
+
+
+
+
+
 //		$class = self::$CI->router->fetch_class();
 //		if ($class != "UploadControl") {//所有下载的板块
 //

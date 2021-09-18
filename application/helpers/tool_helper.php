@@ -138,3 +138,16 @@ function imageSize($source,$destination){
         imagedestroy($image);
     }
 }
+
+//将数组key+value组合成字符串
+function arrayKJoinV($sArray=[]){
+    $return_str="";
+    if(count($sArray)>0)
+    {
+        foreach ($sArray as $key=>$value)
+        {
+            $return_str=$return_str.$key.$value;
+        }
+    }
+    return $return_str;
+}

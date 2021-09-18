@@ -30,7 +30,7 @@ class Custome_Model extends CI_Model
 	}
 
 	//查询记录
-	public function table_seleRow($field,$taname,$wheredata=array(),$likedata=array(),$wherein=array(),$whereinfield=""){
+	public function table_seleRow($field,$taname,$wheredata=array(),$likedata=array(),$wherein=array(),$whereinfield="",$rk=""){
 
 		$this->db->select($field);
 		if(count($wheredata)>0){

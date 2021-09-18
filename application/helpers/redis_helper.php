@@ -34,11 +34,18 @@ function get_reids_key($key)//获取
 	return $result;
 }
 
-function set_reids_key($key,$value)//设置
+function set_reids_key($key,$value,$type=1,$ttl=45)//设置
 {
 	$redis = new Redis();
 	$redis->connect('127.0.0.1', 6379);
-	$result = $redis->set($key,$value);
+	if($type==1){
+        $result = $redis->set($key,$value);
+    }
+	else{
+        $result = $redis->setex($key,$ttl,$value);
+    }
+
+
 	return $result;
 }
 

@@ -11,6 +11,7 @@ class Sys_Model extends CI_Model
 	{
 		parent::__construct();
 		$this->load->database('default');
+        $this->load->helper('tool');
 	}
 
 	//插入记录
@@ -29,8 +30,8 @@ class Sys_Model extends CI_Model
 		return $result;
 	}
 
-	//查询记录
-	public function table_seleRow($field,$taname,$wheredata=array(),$likedata=array(),$wherein=array(),$whereinfield=""){
+	//查询记录 rk=存入redis的key值，rkttl 过期时间
+	public function table_seleRow($field,$taname,$wheredata=array(),$likedata=array(),$wherein=array(),$whereinfield="",$rk="",$rkttl=45){
 
 		$this->db->select($field);
 		if(count($wheredata)>0){
@@ -47,6 +48,16 @@ class Sys_Model extends CI_Model
 		$ss=$this->db->last_query();
 
 		$rows_arr=$query->result_array();
+
+		//存入缓存
+
+        if($rk!="")
+        {
+            if(count($rows_arr)>0){
+                set_reids_key($rk,json_encode($rows_arr),2,$rkttl);
+            }
+
+        }
 
 		return $rows_arr;
 
@@ -160,7 +171,7 @@ class Sys_Model extends CI_Model
 	 * @param null $order_type
 	 * @return mixed
 	 */
-	public function table_seleRow_limit($field, $taname, $wheredata=array(), $likedata=array(), $begin=10, $offset=0, $order=null, $order_type=null,$wherein=array(),$whereinfield="")
+	public function table_seleRow_limit($field, $taname, $wheredata=array(), $likedata=array(), $begin=10, $offset=0, $order=null, $order_type=null,$wherein=array(),$whereinfield="",$rk="",$rkttl=45)
 	{
 		$this->db->select($field);
 		if(count($wheredata)>0){
@@ -179,11 +190,26 @@ class Sys_Model extends CI_Model
 		$query = $this->db->get($taname);
 		$ss=$this->db->last_query();
 		$rows_arr=$query->result_array();
-		return $rows_arr;
+
+
+
+        //存入缓存
+
+        if($rk!="")
+        {
+            if(count($rows_arr)>0){
+                set_reids_key($rk,json_encode($rows_arr),2,$rkttl);
+            }
+
+        }
+
+
+
+        return $rows_arr;
 	}
 
     //查询记录，带join
-    public function table_joinSeleRow_limit($field, $taname, $wheredata=array(), $likedata=array(), $begin=10, $offset=0, $order=null, $order_type=null,$wherein=array(),$whereinfield="",$jointype="left",$jointable="",$joinwhere="")
+    public function table_joinSeleRow_limit($field, $taname, $wheredata=array(), $likedata=array(), $begin=10, $offset=0, $order=null, $order_type=null,$wherein=array(),$whereinfield="",$jointype="left",$jointable="",$joinwhere="",$rk="",$rkttl=45)
     {
         $this->db->select($field);
         if(count($wheredata)>0){
@@ -203,10 +229,22 @@ class Sys_Model extends CI_Model
         $query = $this->db->get($taname);
         $ss=$this->db->last_query();
         $rows_arr=$query->result_array();
+
+        //存入缓存
+
+        if($rk!="")
+        {
+            if(count($rows_arr)>0){
+                set_reids_key($rk,json_encode($rows_arr),2,$rkttl);
+            }
+
+        }
+
+
         return $rows_arr;
     }
 
-    public function table_joinSeleRow($field, $taname, $wheredata=array(), $likedata=array(), $order=null, $order_type=null,$wherein=array(),$whereinfield="",$jointype="left",$jointable="",$joinwhere="")
+    public function table_joinSeleRow($field, $taname, $wheredata=array(), $likedata=array(), $order=null, $order_type=null,$wherein=array(),$whereinfield="",$jointype="left",$jointable="",$joinwhere="",$rk="",$rkttl=45)
     {
         $this->db->select($field);
         if(count($wheredata)>0){
@@ -226,6 +264,15 @@ class Sys_Model extends CI_Model
         $query = $this->db->get($taname);
         $ss=$this->db->last_query();
         $rows_arr=$query->result_array();
+        //存入缓存
+
+        if($rk!="")
+        {
+            if(count($rows_arr)>0){
+                set_reids_key($rk,json_encode($rows_arr),2,$rkttl);
+            }
+
+        }
         return $rows_arr;
     }
 
