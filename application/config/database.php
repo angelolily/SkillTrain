@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'root',
-	'database' => 'Hanfu-world-db',
+	'hostname' => '124.70.77.122',
+	'username' => 'htysg',
+	'password' => 'htysgabc',
+	'database' => 'skilltraindb',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => false,
