@@ -153,7 +153,7 @@ class Classman extends HTY_service
             $sql_query = $sql_query_where;
         }
         $sql_query_total = $sql_query;
-        $sql_query = $sql_query . " order by class_num desc limit " . $offset . "," . $rows;
+        $sql_query = $sql_query . " order by class_num  limit " . $offset . "," . $rows;
         $query = $this->db->query($sql_query);
         $ss = $this->db->last_query();
         $r_total = $this->db->query($sql_query_total)->result_array();
