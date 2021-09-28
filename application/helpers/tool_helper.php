@@ -18,6 +18,21 @@ function bykey_reitem($arr, $key){
 
 }
 
+/**
+ * 生成GUID
+ * @return string
+ */
+function create_guid(){
+    $char_id = strtoupper(md5(uniqid(mt_rand(), true)));
+    $hyphen = chr(45);
+    $guid = substr($char_id, 6, 2).substr($char_id, 4, 2).
+        substr($char_id, 2, 2).substr($char_id, 0, 2).$hyphen
+        .substr($char_id, 10, 2).substr($char_id, 8, 2).$hyphen
+        .substr($char_id,14, 2).substr($char_id,12, 2).$hyphen
+        .substr($char_id,16, 4).$hyphen.substr($char_id,20,12);
+    return $guid;
+}
+
 //图片转换base64
 function fileToBase64($file){
     $base64_file = '';
