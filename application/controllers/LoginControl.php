@@ -1,8 +1,16 @@
 <?php
 
-
+/**
+ * @OA\Info(
+ *  title="职技通",
+ *  version="1.0.0"
+ * )
+ *
+ */
 class LoginControl extends CI_Controller
 {
+
+
 	private $dataArr = [];//操作数据
 
 	function __construct()
@@ -11,11 +19,7 @@ class LoginControl extends CI_Controller
 		$this->load->service('Login');
 		$this->load->helper('tool');
 	}
-	/**
-	 * Notes:用户登录
-	 * User: ljx
-	 * DateTime: 2021/1/22 14:41A
-	 */
+
 	public function loginRow()
 	{
 		$dataArr=[];

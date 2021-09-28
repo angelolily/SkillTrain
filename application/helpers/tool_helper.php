@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //require_once 'vendor/autoload.php';
 //use PhpOffice\PhpSpreadsheet\Spreadsheet;
 //use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+require_once 'public/phpqrcode/phpqrcode.php';
 
 //关联数组删除key
 function bykey_reitem($arr, $key){
@@ -165,4 +166,10 @@ function arrayKJoinV($sArray=[]){
         }
     }
     return $return_str;
+}
+
+//生成二维码图片
+function buildQr($strtext,$path){
+    QRcode::png($strtext, $path,'L', 10, 0);
+
 }
