@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //require_once 'vendor/autoload.php';
 //use PhpOffice\PhpSpreadsheet\Spreadsheet;
 //use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+require_once 'public/phpqrcode/phpqrcode.php';
 
 //关联数组删除key
 function bykey_reitem($arr, $key){
@@ -16,6 +17,21 @@ function bykey_reitem($arr, $key){
 	}
 	return $arr;
 
+}
+
+/**
+ * 生成GUID
+ * @return string
+ */
+function create_guid(){
+    $char_id = strtoupper(md5(uniqid(mt_rand(), true)));
+    $hyphen = chr(45);
+    $guid = substr($char_id, 6, 2).substr($char_id, 4, 2).
+        substr($char_id, 2, 2).substr($char_id, 0, 2).$hyphen
+        .substr($char_id, 10, 2).substr($char_id, 8, 2).$hyphen
+        .substr($char_id,14, 2).substr($char_id,12, 2).$hyphen
+        .substr($char_id,16, 4).$hyphen.substr($char_id,20,12);
+    return $guid;
 }
 
 //图片转换base64
@@ -150,4 +166,10 @@ function arrayKJoinV($sArray=[]){
         }
     }
     return $return_str;
+}
+
+//生成二维码图片
+function buildQr($strtext,$path){
+    QRcode::png($strtext, $path,'L', 10, 0);
+
 }

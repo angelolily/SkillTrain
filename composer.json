@@ -5,6 +5,7 @@
         "ext-fileinfo": "*",
         "ext-openssl": "*",
         "ext-json": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "zircote/swagger-php": "^3.2"
     }
 }
