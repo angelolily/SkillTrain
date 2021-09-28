@@ -19,3 +19,5 @@ application/config/database.php
 /.idea
 /vendor/
 composer.lock
+
+public/enroll/*
