@@ -1,12 +1,4 @@
 <?php
-/*
- * @Author: your name
- * @Date: 2021-09-26 15:06:09
- * @LastEditTime: 2021-09-29 17:33:36
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: \SkillTrain\application\controllers\UserOrderControl.php
- */
 class UserOrderControl  extends CI_Controller{
     private $receive_data;
     public function __construct(){
@@ -28,5 +20,32 @@ class UserOrderControl  extends CI_Controller{
         $resultArr = build_resultArr('SEF000', TRUE, 0,'报名信息存储成功', $res );
         http_data(200, $resultArr, $this);
     }
-    
+    public function get_enroll_info(){
+        $res = $this->userorder->get_enroll_info($this->receive_data);
+        if(!$res){
+            $resultArr = build_resultArr('GEI001', FALSE, 204,'获取报名信息错误', null );
+            http_data(204, $resultArr, $this);
+        }
+        $img_arr = [];
+        $base_url='http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+        if(array_key_exists('sign_picture',$res[0])){
+            array_push($img_arr,array('sign_picture'=>$base_url.'public/enroll/'.$res[0]['sign_image'].'/'.$res[0]['sign_picture']));
+        }
+        if(array_key_exists('sign_id_card_img',$res[0])){
+            array_push($img_arr,array('sign_id_card_img'=>$base_url.'public/enroll/'.$res[0]['sign_image'].'/'.$res[0]['sign_id_card_img']));
+        }
+        if(array_key_exists('sign_education_certificate',$res[0])){
+            array_push($img_arr,array('sign_education_certificate'=>$base_url.'public/enroll/'.$res[0]['sign_image'].'/'.$res[0]['sign_education_certificate']));
+        }
+        if(array_key_exists('sign_skill_certificate',$res[0])){
+            array_push($img_arr,array('sign_skill_certificate'=>$base_url.'public/enroll/'.$res[0]['sign_image'].'/'.$res[0]['sign_skill_certificate']));
+        }
+        $res_order = $this->userorder->get_order_info($res[0]['sign_order_id']);
+        if(!$res_order){
+            $resultArr = build_resultArr('GEI002', FALSE, 204,'获取报名信息错误', null );
+            http_data(204, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('GEI000', TRUE, 0,'获取报名信息成功', [$res[0],$res_order[0],$img_arr] );
+        http_data(200, $resultArr, $this);
+    }
 }

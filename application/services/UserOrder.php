@@ -27,5 +27,14 @@ class UserOrder extends HTY_service{
             return $returnInfo;
         }
     }
-
+    public function get_enroll_info($data){
+        $field = "sign_name,sign_sex,sign_card_num,sign_birthday,sign_phone,sign_image,sign_picture,sign_id_card_img,sign_education_certificate,members_id,competition_name,sign_competition_id,sign_order_id";
+        $where = array('sign_id'=>$data['id']);
+        return $this->Sys_Model->table_seleRow($field,'sign_up',$where);
+    }
+    public function get_order_info($data){
+        $field = "*";
+        $where = array('order_autoid'=>$data);
+        return $this->Sys_Model->table_seleRow($field,'order',$where);
+    }
 }
