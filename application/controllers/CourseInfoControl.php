@@ -83,10 +83,7 @@ class CourseInfoControl extends CI_Controller{
             http_data(204, $resultArr, $this);
         }
         $final_res = $res;
-        if($type === 'detail'){
-            $final_res = $res[0];
-        }
-        $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+        $base_url='http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
         for($i=0; $i<count($final_res); $i++){
             if(array_key_exists('course_cover',$final_res[$i])){
                 $final_res[$i]['course_cover'] = $base_url.'public/coursecover/'.$final_res[$i]['course_cover'];
@@ -94,6 +91,9 @@ class CourseInfoControl extends CI_Controller{
             if(array_key_exists('course_graphic',$final_res[$i])){
                 $final_res[$i]['course_graphic'] = $base_url.'public/coursegraphic/'.$final_res[$i]['course_graphic'];
             }
+        }
+        if($type === 'detail'){
+            $final_res = $final_res[0];
         }
         $resultArr = build_resultArr('GCI000', TRUE, 0,'获取课程信息成功', $final_res );
         http_data(200, $resultArr, $this);
