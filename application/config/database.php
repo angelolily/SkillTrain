@@ -74,23 +74,24 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'root',
-	'database' => 'Hanfu-world-db',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => false,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => false,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+    'dsn'	=> '',
+    'hostname' => '124.70.77.122',
+    'username' => 'htysg',
+    'password' => 'htysgabc',
+    'database' => 'skilltraindb',
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => false,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => false,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
 );
+
