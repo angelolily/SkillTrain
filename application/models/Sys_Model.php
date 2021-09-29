@@ -23,7 +23,10 @@ class Sys_Model extends CI_Model
 		}
 		else
 		{
+
 			$this->db->insert_batch($taname,$values);
+
+
 		}
 		$result = $this->db->affected_rows();
 		$this->db->cache_delete_all();
