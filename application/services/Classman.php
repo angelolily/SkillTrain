@@ -51,6 +51,7 @@ class Classman extends HTY_service
             $this->Sys_Model->table_addRow("schedule", $resluts, 2);
             $sql2 = "" . $indData['c'][0]['members_id'];
             foreach ($indData['c'] as $item) {
+                if($item['members_id']==$indData['c'][0]['members_id']){
                     break;
                 }
                 $sql2 = $sql2 . "," . $item['members_id'];
