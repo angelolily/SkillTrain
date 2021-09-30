@@ -23,7 +23,10 @@ class Sys_Model extends CI_Model
 		}
 		else
 		{
+
 			$this->db->insert_batch($taname,$values);
+
+
 		}
 		$result = $this->db->affected_rows();
 		$this->db->cache_delete_all();
@@ -31,7 +34,7 @@ class Sys_Model extends CI_Model
 	}
 
 	//查询记录 rk=存入redis的key值，rkttl 过期时间
-	public function table_seleRow($field,$taname,$wheredata=array(),$likedata=array(),$wherein=array(),$whereinfield="",$rk="",$rkttl=45){
+	public function table_seleRow($field,$taname,$wheredata=array(),$likedata=array(),$wherein=array(),$whereinfield="",$groupby=[],$rk="",$rkttl=45){
 
 		$this->db->select($field);
 		if(count($wheredata)>0){
@@ -43,6 +46,11 @@ class Sys_Model extends CI_Model
 		if(count($wherein)>0){
 			$this->db->where_in($whereinfield,$wherein);//判断需不需要ow where in
 		}
+
+		if(count($groupby)>0){
+            $this->db->group_by($groupby);
+        }
+
 		$query = $this->db->get($taname);
 
 		$ss=$this->db->last_query();
@@ -171,7 +179,7 @@ class Sys_Model extends CI_Model
 	 * @param null $order_type
 	 * @return mixed
 	 */
-	public function table_seleRow_limit($field, $taname, $wheredata=array(), $likedata=array(), $begin=10, $offset=0, $order=null, $order_type=null,$wherein=array(),$whereinfield="",$rk="",$rkttl=45)
+	public function table_seleRow_limit($field, $taname, $wheredata=array(), $likedata=array(), $begin=10, $offset=0, $order=null, $order_type=null,$wherein=array(),$whereinfield="",$groupby=[],$rk="",$rkttl=45)
 	{
 		$this->db->select($field);
 		if(count($wheredata)>0){
@@ -187,7 +195,12 @@ class Sys_Model extends CI_Model
 		if(!(is_null($order))){
 			$this->db->order_by($order,$order_type);
 		}
-		$query = $this->db->get($taname);
+
+        if(count($groupby)>0){
+            $this->db->group_by($groupby);
+        }
+
+        $query = $this->db->get($taname);
 		$ss=$this->db->last_query();
 		$rows_arr=$query->result_array();
 
