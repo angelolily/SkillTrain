@@ -1,4 +1,6 @@
 <?php
+$route['ci/get_info'] = 'CourseInfoControl/get_course_info';// 获取课程信息
+
 $route['pay/login'] = 'WxPayControl/login';// 测试登陆
 $route['pay/prepay'] = 'WxPayControl/get_prepay_id';// 获取prepay_id数据
 $route['pay/update'] = 'WxPayControl/update_order_info';// 未付款订单付款后更新订单

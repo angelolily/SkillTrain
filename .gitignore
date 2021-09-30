@@ -12,12 +12,13 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 
 #codeigniter 3
 application/logs/*
+application/config/database.php
 !application/logs/index.html
 !application/logs/.htaccess
 
 /.idea
 /vendor/
-/composer.lock.json
-/application/config/database.php
+/composer.lock
 public/coursecover/*
 public/coursegraphic/*
+public/enroll/*
