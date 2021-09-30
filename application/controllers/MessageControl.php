@@ -119,8 +119,48 @@ class MessageControl extends CI_Controller
 
     }
 
+    /**
+     * Notes:获取考勤主表
+     * User: lchangelo
+     * DateTime: 2021/09/29 15:39
+     */
+    public function getAttendanceRow()
+    {
+        $keys="rows,pages,class_name,course_name,members_name,members_phone";
+        $this->hedVerify($keys);
+        $result = $this->msgservice->getAttendance($this->dataArr);
+        if (count($result) >= 0) {
+            $resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D003', false, '获取失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
 
+    /**
+     * Notes:获取课程考勤二维码
+     * User: lchangelo
+     * DateTime: 2021/09/29 15:39
+     */
 
+    public function getCrouseQR()
+    {
+        $keys="qrtext";
+        $this->hedVerify($keys);
+        $filenamne=time().rand(1111,9999);
+        $qrsave="./public/qrclass/".$filenamne.".png";
+        buildQr($this->dataArr['qrtext'],$qrsave);
+        if(file_exists($qrsave)){
+            $result['qrpath']="http://192.168.2.8/public/qrclass/".$filenamne."png";
+            $resulArr = build_resulArr('D000', true, '生成成功成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        }
+        else {
+            $resulArr = build_resulArr('D003', false, '获取失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
 
 
 

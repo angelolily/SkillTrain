@@ -147,7 +147,7 @@ class Classman extends HTY_service
     {
         //Select SQL_CALC_FOUND_ROWS UserId,UserName,base_dept.DeptName,Mobile,Birthday,UserStatus,UserEmail,Sex,Remark,IsAdmin,UserRol,UserPost,base_user.CREATED_TIME from base_user,base_dept where base_user.DeptId = base_dept.DeptId
         $offset = ($pages - 1) * $rows;//计算偏移量
-        $sql_query = "Select DISTINCT class_id,course_name,class_num,school_time,home_time,class_romm,teacher,rate,members_name,members_id,members_openid from schedule  where  1=1  ";
+        $sql_query = "Select DISTINCT class_id,course_name,class_num,school_time,home_time,class_romm,teacher,rate,members_name,members_id,members_openid,members_phone from schedule  where  1=1  ";
         $sql_query_where = $sql_query . $wheredata;
         if ($wheredata != "") {
             $sql_query = $sql_query_where;
