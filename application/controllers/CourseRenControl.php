@@ -201,4 +201,53 @@ class CourseRenControl extends CI_Controller{
             http_data(200, $resultArr, $this);
         }
     }
+
+    /**
+     * @OA\Post(
+     *    tags={"hyr"},
+     *    path="cr/gc",
+     *    summary="获取用户所有课程",
+     *	@OA\RequestBody(
+     *		@OA\MediaType(
+     *            mediaType="application/json",
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="members_id",
+     *                    type="string",
+     *                    description="会员id"
+     *                ),
+     *                example={
+     *                    "members_id":"1"
+     *                }
+     *            )
+     *        )
+     *    ),
+     *	@OA\Response(
+     *        response=200,
+     *        description="正确返回",
+     *		@OA\JsonContent(
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="response_key",
+     *                    type="response_type",
+     *                    description="参数说明"
+     *                ),
+     *            ),
+     *            example={
+     *                "example_response_key":"example_response_val"
+     *            }
+     *        )
+     *    ),
+     * )
+     **/
+    public function sign(){
+        $result = $this->courseren->sign($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('sg000', true, 0,'签到成功',[] );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('sg002', false, 0,'签到失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
 }
