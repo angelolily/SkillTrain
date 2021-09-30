@@ -180,10 +180,4 @@ class MessageControl extends CI_Controller
             http_data(200, $resulArr, $this);
         }
     }
-
-
-
-
-
-
 }

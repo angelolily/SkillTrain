@@ -127,7 +127,7 @@ class CoursewareControl extends CI_Controller
 //修改
 	public function modifyRow()
     {
-        $keys="course_num";
+        $keys="course_num,course_id";
         $this->hedVerify($keys);
 //		$this->hedVerify();
         $result = $this->courseware->modifycourseware($this->dataArr, $this->userArr['Mobile']);

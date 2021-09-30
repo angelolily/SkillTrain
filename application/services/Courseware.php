@@ -21,10 +21,10 @@ class Courseware extends HTY_service
 //新增课件
     public function addData($indData = [], $by)
     {
-        $indData['created_by'] = $by;
-        $indData['created_time'] = date('Y-m-d H:i');
-        $result = $this->Sys_Model->table_addRow("course_attach", $indData, 1);
-        return $result;
+            $indData['created_by'] = $by;
+            $indData['created_time'] = date('Y-m-d H:i');
+            $result = $this->Sys_Model->table_addRow("course_attach", $indData, 1);
+            return $result;
     }
 
     //图片详情上传

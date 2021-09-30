@@ -169,16 +169,9 @@ class MsgService extends HTY_service
                 $deptTmpArr['total']=[];
                 $deptTmpArr['data']=[];
             }
-
-
-
-
-
         }
         return $deptTmpArr;
     }
-
-
 }
 
 

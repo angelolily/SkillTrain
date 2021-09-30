@@ -157,7 +157,7 @@ class OrderControl extends CI_Controller
 
     public function modifystatuRow()//修改订单状态
     {
-        $keys="order_id,order_statue";
+        $keys="order_id";
         $this->hedVerify($keys);
 //		$this->hedVerify();
         $result = $this->order->modifystatu($this->dataArr, $this->userArr['Mobile']);
