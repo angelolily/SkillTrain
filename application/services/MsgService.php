@@ -143,6 +143,40 @@ class MsgService extends HTY_service
         return  $result;
     }
 
+    //获取考勤明细
+    public function getAttendDetail($searchWhere = [])
+    {
+
+        $where = [];
+        $data=[];
+        if (count($searchWhere) > 0) {
+
+            $where['class_id']=$searchWhere['class_id'];
+            $where['course_id']=$searchWhere['course_id'];
+            $where['members_id']=$searchWhere['members_id'];
+
+            $pages = $searchWhere['pages'];
+            $rows = $searchWhere['rows'];
+            $offset = ($pages - 1) * $rows;//计算偏移量
+            $arr_total=$this->Sys_Model->table_seleRow_limit("*","schedule",$where,[]);
+
+            if(count($arr_total)>0){
+                $deptTmpArr['total'] = count($arr_total);//获取总行数
+                $data = $this->Sys_Model->table_seleRow_limit("*","schedule",$where,[],$rows,$offset);
+                $deptTmpArr['data']=$data;
+            }
+            else{
+                $deptTmpArr['total']=[];
+                $deptTmpArr['data']=[];
+            }
+
+
+
+
+
+        }
+        return $deptTmpArr;
+    }
 
 
 }

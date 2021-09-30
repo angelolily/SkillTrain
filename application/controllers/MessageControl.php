@@ -139,6 +139,25 @@ class MessageControl extends CI_Controller
     }
 
     /**
+     * Notes:获取考勤明细表
+     * User: lchangelo
+     * DateTime: 2021/09/29 15:39
+     */
+    public function getAttDetailRow()
+    {
+        $keys="rows,pages,class_id,course_id,members_id";
+        $this->hedVerify($keys);
+        $result = $this->msgservice->getAttendDetail($this->dataArr);
+        if (count($result) >= 0) {
+            $resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D003', false, '获取失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
+
+    /**
      * Notes:获取课程考勤二维码
      * User: lchangelo
      * DateTime: 2021/09/29 15:39
