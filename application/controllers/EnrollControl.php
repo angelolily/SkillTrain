@@ -4,16 +4,69 @@ class EnrollControl extends CI_Controller{
     public function __construct(){
         parent::__construct();
         $this->load->helper('tool');
-        $this->load->helper('qrcode');
         $this->load->service('Enroll');
         $receive = file_get_contents('php://input');
         $this->receive_data = json_decode($receive, true);
     }
+
+    /**
+     * @OA\Post(
+     *    tags={"yjl"},
+     *    path="e/upload_i",
+     *    summary="接收报名时用户上传的照片",
+     *	@OA\RequestBody(
+     *		@OA\MediaType(
+     *            mediaType="application/json",
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="type",
+     *                    type="string",
+     *                    description="上传的照片类型"
+     *                ),
+     *				@OA\Property(
+     *                    property="dir",
+     *                    type="string",
+     *                    description="本次报名照片存储文件夹名"
+     *                ),
+     *                example={
+     *                    "type":"education",
+     *                    "dir":"",
+     *                }
+     *            )
+     *        )
+     *    ),
+     *	@OA\Response(
+     *        response=200,
+     *        description="正确返回",
+     *		@OA\JsonContent(
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="Data",
+     *                    type="string",
+     *                    description="文件名"
+     *                )
+     *            ),
+     *            example=[
+     *                {"Data":"xxx.jpg"}
+     *            ]
+     *        )
+     *    ),
+     * )
+     **/
     public function upload_img(){
         $file = $_FILES['file'];
         $type = $this->input->post('type');
         $dir_name = $this->input->post('dir');
-        $file_name = time().rand(100,999).$this->input->post('name');
+        if($type === 'id_photo'){
+            $key_name = 'id_';
+        }else if($type === 'id_card'){
+            $key_name = 'card_';
+        }else if($type === 'education'){
+            $key_name = 'edu_';
+        }else{
+            $key_name = 'skill_';
+        }
+        $file_name = $key_name.time().rand(100,999).$this->input->post('name');
         $path = './public/enroll/'.$dir_name;
         $tamp_arr = explode('.', $file['name']);
         $ex_name = '.' . $tamp_arr[count($tamp_arr)-1];
@@ -21,9 +74,10 @@ class EnrollControl extends CI_Controller{
             $file_tmp = $file['tmp_name'];
             $save_path = $path . "/" . $file_name . $ex_name;
             if(file_exists($save_path)){
-                $file_name = time().rand(100,999).$this->input->post('name');
+                $file_name = $key_name.time().rand(100,999).$this->input->post('name');
                 $save_path = $path . "/" . $file_name . $ex_name;
             }
+            // 如果图片过大则压缩后再保存图片
             $ab_url = 'D:\\phpstudy_pro\\WWW\\Hanfu-World\\public\\enroll\\'.$dir_name.'\\'.$file_name.$ex_name;
             $size = $file['size']/10240;
             if($size>900){
@@ -36,13 +90,11 @@ class EnrollControl extends CI_Controller{
                 $resultArr = build_resultArr('UI002', FALSE, 0,'存储照片失败', null );
                 http_data(200, $resultArr, $this);
             }
-            $resultArr = build_resultArr('UI000', TRUE, 0,'存储照片成功', null );
-            http_data(200, $resultArr, $this);
+            $resultArr = build_resultArr('UI000', TRUE, 0,'存储照片成功', $file_name.$ex_name );
         }else{
             $resultArr = build_resultArr('UI001', FALSE, 0,'打开目录失败', null );
-            http_data(200, $resultArr, $this);
         }
-
+        http_data(200, $resultArr, $this);
     }
     public function update_img_dir(){
         $type = $this->receive_data['type'];
@@ -162,6 +214,45 @@ class EnrollControl extends CI_Controller{
         $resultArr = build_resultArr('SUB000', TRUE, 0,'获取值成功', $res );
         http_data(200, $resultArr, $this);
     }
+
+    /**
+     * @OA\Post(
+     *    tags={"yjl"},
+     *    path="e/get_model",
+     *    summary="获取当前类型的报名模板数组",
+     *	@OA\RequestBody(
+     *		@OA\MediaType(
+     *            mediaType="application/json",
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="model_type",
+     *                    type="string",
+     *                    description="报名模板类型"
+     *                ),
+     *                example={
+     *                    "model_type":"课程"
+     *                }
+     *            )
+     *        )
+     *    ),
+     *	@OA\Response(
+     *        response=200,
+     *        description="正确返回",
+     *		@OA\JsonContent(
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="Data",
+     *                    type="array",
+     *                    description="报名模板数组"
+     *                )
+     *            ),
+     *            example=[
+     *                {"model_type":"课程"}
+     *            ]
+     *        )
+     *    ),
+     * )
+     **/
     public function get_sign_model_list(){
         $res = $this->enroll->get_sign_model_list($this->receive_data);
         if(!$res){
