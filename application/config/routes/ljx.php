@@ -37,6 +37,7 @@ $route['clc/del'] = 'ClassmanControl/delRow';//删除班级排课
 $route['clc/get'] = 'ClassmanControl/getclassRow';//获取班级
 $route['clc/getschedule'] = 'ClassmanControl/getscheduleRow';//班级获取排课
 $route['scd/get'] = 'ScheduleControl/getRow';//获取搜索排课表
+$route['scd/getmember'] = 'ScheduleControl/getmemberRow';//根据班级ID获取信息
 $route['scd/modify'] = 'ScheduleControl/modifyRow';//修改单条单人排课
 $route['adc/get'] = 'AttendanceControl/getRow';//获取搜索考勤记录
 $route['adc/modify'] = 'AttendanceControl/modifyRow';//修改签到时间
