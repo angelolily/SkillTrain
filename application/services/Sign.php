@@ -28,22 +28,15 @@ class Sign extends HTY_service
 	{
         if($searchWhere['DataScope']) {
             $where = "";
-            $like = "";
+
 
             if (count($searchWhere) > 0) {
-
-                if ($searchWhere['sign_name'] != '') {//报名人员姓名 模糊
-                    $like = $like." and sign_name like '%{$searchWhere['sign_name']}%'";
-                }
-                if ($searchWhere['sign_card_num'] != '') {//报名人员身份证  模糊
-                    $like = $like." and sign_card_num like '%{$searchWhere['sign_card_num']}%'";
-                }
                 if ($searchWhere['sign_competition_id'] != '') {//课程ID  下拉
                     $where = $where . " and sign_competition_id in('{$searchWhere['sign_competition_id']}')";
                 }
                 $pages = $searchWhere['pages'];
                 $rows = $searchWhere['rows'];
-                $deptTmpArr=$this->get_Signdata($pages, $rows,$where,$like);
+                $deptTmpArr=$this->get_Signdata($pages, $rows,$where);
             }
         }
         return $deptTmpArr;
@@ -52,17 +45,14 @@ class Sign extends HTY_service
 
 
 //搜索报名信息页面 分页
-public function get_Signdata($pages,$rows,$wheredata,$likedata){
+public function get_Signdata($pages,$rows,$wheredata){
     //Select SQL_CALC_FOUND_ROWS UserId,UserName,base_dept.DeptName,Mobile,Birthday,UserStatus,UserEmail,Sex,Remark,IsAdmin,UserRol,UserPost,base_user.CREATED_TIME from base_user,base_dept where base_user.DeptId = base_dept.DeptId
     $offset=($pages-1)*$rows;//计算偏移量
-    $sql_query="Select sign_up.*,course.*	  from sign_up,course where course.course_id=sign_up.sign_competition_id  where 1=1 ";
+    $sql_query="Select sign_up.*,course.*	  from sign_up,course where course.course_id=sign_up.sign_competition_id   ";
     $sql_query_where=$sql_query.$wheredata;
     if($wheredata!="")
     {
         $sql_query=$sql_query_where;
-    }
-    if($likedata!=""){//like不为空
-        $sql_query=$sql_query_where." ".$likedata;
     }
     $sql_query_total=$sql_query;
     $sql_query=$sql_query." order by sign_created_time desc limit ".$offset.",".$rows;

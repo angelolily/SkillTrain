@@ -1,7 +1,7 @@
 <?php
 
 
-class ClassmanControl extends CI_Controller
+class CoursewareControl extends CI_Controller
 {
 	private $dataArr = [];//操作数据
 	private $userArr = [];//用户数据
@@ -9,7 +9,7 @@ class ClassmanControl extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->service('Classman');
+		$this->load->service('Courseware');
 		$this->load->helper('tool');
 		$receiveArr = file_get_contents('php://input');
 		$this->OldDataArr = json_decode($receiveArr, true);
@@ -57,10 +57,10 @@ class ClassmanControl extends CI_Controller
 	 */
 	public function newRow()
 	{
-		$keys="phone";
+		$keys="course_name,course_num,course_id";
 		$this->hedVerify($keys);
-		$resultNum = $this->classman->addData($this->dataArr, $this->userArr['Mobile']);
-		if ($resultNum) {
+		$resultNum = $this->courseware->addData($this->dataArr, $this->userArr['Mobile']);
+		if (count($resultNum )> 0) {
 			$resulArr = build_resulArr('D000', true, '插入成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
@@ -68,25 +68,39 @@ class ClassmanControl extends CI_Controller
 			http_data(200, $resulArr, $this);
 		}
 	}
-//报名人未排课排班级下拉
-    public function showRow()
+//上传详情图
+    public function Uploaddetail()
     {
-        $this->hedVerify("course_id");//前置验证
-        $result = $this->classman->membersdata($this->dataArr);
-        if (count($result) > 0) {
-            $resulArr = build_resulArr('D000', true, '显示成功', json_encode($result));
+        $result = $this->courseware->imageuploaddetail($this->dataArr);
+        if (count($result )> 0) {
+            $resulArr = build_resulArr('D000', true, '插入成功', json_encode($result));
             http_data(200, $resulArr, $this);
         } else {
-            $resulArr = build_resulArr('D003', false, '显示失败', []);
+            $resulArr = build_resulArr('D002', false, '插入失败', []);
             http_data(200, $resulArr, $this);
         }
     }
-//获取班级表
-	public function getclassRow()
+//显示详情图
+    public function finddetail()
+    {
+        $this->hedVerify();//前置验证
+        $result = $this->courseware->getimagedetail($this->dataArr);
+        if (count($result)> 0) {
+            $resulArr = build_resulArr('D000', true, '显示成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D002', false, '显示失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
+
+
+//获取
+	public function getRow()
 	{
-		$keys="rows,pages,class_name,course_name,begin,end";
+		$keys="rows,pages,course_id";
 		$this->hedVerify($keys);
-		$result = $this->classman->getclass($this->dataArr);
+		$result = $this->courseware->getcourseware($this->dataArr);
 		if (count($result) >= 0) {
 			$resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
 			http_data(200, $resulArr, $this);
@@ -95,30 +109,14 @@ class ClassmanControl extends CI_Controller
 			http_data(200, $resulArr, $this);
 		}
 	}
-    //获取排课表
-    public function getscheduleRow()
-    {
-        $keys="class_id";
-        $this->hedVerify($keys);
-        $result = $this->classman->getschedule($this->dataArr);
-        if (count($result) >= 0) {
-            $resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
-            http_data(200, $resulArr, $this);
-        } else {
-            $resulArr = build_resulArr('D003', false, '获取失败', []);
-            http_data(200, $resulArr, $this);
-        }
-
-
-    }
 //删除
 	public function delRow()
 	{
-		$keys="class_id";
+		$keys="course_id,course_num";
 		$this->hedVerify($keys);
 //		$this->hedVerify();
-		$result = $this->classman->delclass_group($this->dataArr);
-		if ($result) {
+		$result = $this->courseware->delcourseware($this->dataArr);
+		if (count($result) > 0) {
 			$resulArr = build_resulArr('D000', true, '删除成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
@@ -126,14 +124,14 @@ class ClassmanControl extends CI_Controller
 			http_data(200, $resulArr, $this);
 		}
 	}
-	//修改
+//修改
 	public function modifyRow()
     {
-        $keys="phone";
+        $keys="course_num";
         $this->hedVerify($keys);
 //		$this->hedVerify();
-        $result = $this->classman->modifyclass_group($this->dataArr, $this->userArr['Mobile']);
-        if ($result) {
+        $result = $this->courseware->modifycourseware($this->dataArr, $this->userArr['Mobile']);
+        if (count($result) > 0) {
             $resulArr = build_resulArr('D000', true, '修改成功', []);
             http_data(200, $resulArr, $this);
         } else {
@@ -141,6 +139,4 @@ class ClassmanControl extends CI_Controller
             http_data(200, $resulArr, $this);
         }
     }
-
-
 }

@@ -38,7 +38,14 @@ $route['clc/get'] = 'ClassmanControl/getclassRow';//获取班级
 $route['clc/getschedule'] = 'ClassmanControl/getscheduleRow';//班级获取排课
 $route['scd/get'] = 'ScheduleControl/getRow';//获取搜索排课表
 $route['scd/modify'] = 'ScheduleControl/modifyRow';//修改单条单人排课
-
+$route['adc/get'] = 'AttendanceControl/getRow';//获取搜索考勤记录
+$route['adc/modify'] = 'AttendanceControl/modifyRow';//修改签到时间
+$route['csw/new'] = 'CoursewareControl/newRow';//新增课件
+$route['csw/upd'] = 'CoursewareControl/Uploaddetail';//存入课件图文
+$route['csw/fdd'] = 'CoursewareControl/finddetail';//获取课件图文
+$route['csw/modify'] = 'CoursewareControl/modifyRow';//修改课件
+$route['csw/del'] = 'CoursewareControl/delRow';//删除课件
+$route['csw/get'] = 'CoursewareControl/getRow';//获取课件
 
 
 
