@@ -171,7 +171,7 @@ class MessageControl extends CI_Controller
         $qrsave="./public/qrclass/".$filenamne.".png";
         buildQr($this->dataArr['qrtext'],$qrsave);
         if(file_exists($qrsave)){
-            $result['qrpath']="http://192.168.2.8/public/qrclass/".$filenamne."png";
+            $result['qrpath']="http://124.70.77.122/SkillTrain/public/qrclass/".$filenamne.".png";
             $resulArr = build_resulArr('D000', true, '生成成功成功', json_encode($result));
             http_data(200, $resulArr, $this);
         }
