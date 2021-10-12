@@ -19,7 +19,7 @@ class DeptControl extends CI_Controller
 
 	/**
 	 * Notes:前置验证，将用户信息与数据分离
-	 * User: lchangelo
+	 * User: ljx
 	 * DateTime: 2020/12/24 14:39
 	 */
 	private function hedVerify($keys="")
@@ -57,7 +57,7 @@ class DeptControl extends CI_Controller
 
 	/**
 	 * Notes:部门新增记录
-	 * User: lchangelo
+	 * User: ljx
 	 * DateTime: 2020/12/24 14:41
 	 */
 	public function newRow()
@@ -79,7 +79,7 @@ class DeptControl extends CI_Controller
 
 	/**
 	 * Notes:获取部门信息
-	 * User: angelo
+	 * User: ljx
 	 * DateTime: 2020/12/25 10:01
 	 */
 	public function getRow()

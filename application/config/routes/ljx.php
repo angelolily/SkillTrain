@@ -29,7 +29,7 @@ $route['csc/get'] = 'CourseControl/getRow';//获取课程
 //$route['csc/publish'] = 'CourseControl/publishRow';//发布课程
 $route['csc/finally'] = 'CourseControl/finallyRow';//结束课程
 //$route['csc/lowactivity'] = 'CourseControl/lowactivity';//下架课程
-$route['mem/get'] = 'MemberControl/getRow';//获取会员报表分页
+//$route['mem/get'] = 'MemberControl/getRow';//获取会员报表分页
 $route['clc/new'] = 'ClassmanControl/newRow';//新增班级排课
 $route['clc/show'] = 'ClassmanControl/showRow';//会员下拉
 $route['clc/modify'] = 'ClassmanControl/modifyRow';//修改班级排课
@@ -47,6 +47,17 @@ $route['csw/fdd'] = 'CoursewareControl/finddetail';//获取课件图文
 $route['csw/modify'] = 'CoursewareControl/modifyRow';//修改课件
 $route['csw/del'] = 'CoursewareControl/delRow';//删除课件
 $route['csw/get'] = 'CoursewareControl/getRow';//获取课件
+$route['tea/add'] = 'TeacherControl/newRow';//新增教师
+$route['tea/modify'] = 'TeacherControl/modifyRow';//修改
+$route['tea/modifystatus'] = 'TeacherControl/teacherstatus';//修改状态
+$route['tea/get'] = 'TeacherControl/getRow';//获取搜索教师
+$route['ctc/many'] = 'CertControl/manyimageupload';//多图片上传
+$route['ctc/read'] = 'CertControl/readmaneypic';//读取目录下多图片
+$route['ctc/new'] = 'CertControl/newRow';//新增证书
+$route['ctc/get'] = 'CertControl/getRow';//获取证书
+$route['ctc/modify'] = 'CertControl/modifyRow';//修改证书
+$route['ctc/del'] = 'CertControl/delRow';//删除证书
+$route['ctc/show'] = 'CertControl/membersdata';//人员下拉
 
 
 
