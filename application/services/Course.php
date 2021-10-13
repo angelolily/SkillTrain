@@ -70,7 +70,7 @@ class Course extends HTY_service
         if($handler){
             $dir_original=str_replace('.','',$dir_original);
             $arrdirfiles=array();
-            $dirfilename = "http://192.168.2.10/SkillTrain" . $dir_original .'/'. $pic['course_graphic'] ;
+            $dirfilename = "http://124.70.77.122/SkillTrain" . $dir_original .'/'. $pic['course_graphic'] ;
             //5、关闭目录
             closedir($handler);
             $resultvalue['name']=$pic['course_graphic'];
@@ -117,7 +117,7 @@ class Course extends HTY_service
         $handler = opendir($dir_original);
         if($handler){
             $dir_original=str_replace('.','',$dir_original);
-            $dirfilename = "http://192.168.2.10/SkillTrain" . $dir_original .'/'. $pic['course_cover'];
+            $dirfilename = "http://124.70.77.122/SkillTrain" . $dir_original .'/'. $pic['course_cover'];
             //5、关闭目录
             closedir($handler);
             $resultvalue['name']=$pic['course_cover'];

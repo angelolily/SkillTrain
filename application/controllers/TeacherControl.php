@@ -1,7 +1,7 @@
 <?php
 
 
-class AttendanceControl extends CI_Controller
+class TeacherControl extends CI_Controller
 {
 	private $dataArr = [];//操作数据
 	private $userArr = [];//用户数据
@@ -9,13 +9,12 @@ class AttendanceControl extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->service('Attendance');
+		$this->load->service('Teacher');
 		$this->load->helper('tool');
 		$receiveArr = file_get_contents('php://input');
 		$this->OldDataArr = json_decode($receiveArr, true);
 	}
 	/**
-     *
 	 * Notes:前置验证，将用户信息与数据分离
 	 * User: lchangelo
 	 * DateTime: 2020/12/24 14:39
@@ -52,12 +51,32 @@ class AttendanceControl extends CI_Controller
 		}
 	}
 
-//获取排课表
+
+	/**
+	 * Notes:新增记录
+	 * User: ljx
+	 *
+	 */
+	public function newRow()
+	{
+		$keys="teacher_name";
+		$this->hedVerify($keys);
+		$resultNum = $this->teacher->addData($this->dataArr, $this->userArr['Mobile']);
+		if (count($resultNum )> 0) {
+			$resulArr = build_resulArr('D000', true, '插入成功', []);
+			http_data(200, $resulArr, $this);
+		} else {
+			$resulArr = build_resulArr('D002', false, '插入失败', []);
+			http_data(200, $resulArr, $this);
+		}
+	}
+
+//获取
 	public function getRow()
 	{
-		$keys="rows,pages,course_id";
+		$keys="rows,pages,teacher_phone,teacher_name,course_name,class_name";
 		$this->hedVerify($keys);
-		$result = $this->attendance->getcourse($this->dataArr);
+		$result = $this->teacher->getteacher($this->dataArr);
 		if (count($result) >= 0) {
 			$resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
 			http_data(200, $resulArr, $this);
@@ -66,13 +85,30 @@ class AttendanceControl extends CI_Controller
 			http_data(200, $resulArr, $this);
 		}
 	}
+
+
+	public function teacherstatus()
+	{
+		$keys="teacher_id,teacher_status";
+		$this->hedVerify($keys);
+//		$this->hedVerify();
+		$result = $this->teacher->teacherstatus($this->dataArr);
+		if ($result) {
+			$resulArr = build_resulArr('D000', true, '修改状态成功', []);
+			http_data(200, $resulArr, $this);
+		} else {
+			$resulArr = build_resulArr('D003', false, '修改状态失败', []);
+			http_data(200, $resulArr, $this);
+		}
+	}
+
 	public function modifyRow()
     {
-        $keys="course_id,course_name,course_describe,course_type,course_graphic,course_cover,course_ishome,course_sex_limit,course_limitup,course_limitdown,course_number_limit,course_beginDate,course_endDate,course_signBegin,course_signEnd,course_signPrice,course_signIntegral";
+        $keys="teacher_id";
         $this->hedVerify($keys);
 //		$this->hedVerify();
-        $result = $this->schedule->modifycourse($this->dataArr, $this->userArr['Mobile']);
-        if (count($result) > 0) {
+        $result = $this->teacher->modifyteacher($this->dataArr, $this->userArr['Mobile']);
+        if ($result) {
             $resulArr = build_resulArr('D000', true, '修改成功', []);
             http_data(200, $resulArr, $this);
         } else {
@@ -80,10 +116,5 @@ class AttendanceControl extends CI_Controller
             http_data(200, $resulArr, $this);
         }
     }
-
-
-
-
-
 
 }

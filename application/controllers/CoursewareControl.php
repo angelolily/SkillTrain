@@ -1,7 +1,7 @@
 <?php
 
 
-class DeptControl extends CI_Controller
+class CoursewareControl extends CI_Controller
 {
 	private $dataArr = [];//操作数据
 	private $userArr = [];//用户数据
@@ -9,17 +9,14 @@ class DeptControl extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->service('Dept');
+		$this->load->service('Courseware');
 		$this->load->helper('tool');
 		$receiveArr = file_get_contents('php://input');
 		$this->OldDataArr = json_decode($receiveArr, true);
 	}
-
-
-
 	/**
 	 * Notes:前置验证，将用户信息与数据分离
-	 * User: ljx
+	 * User: lchangelo
 	 * DateTime: 2020/12/24 14:39
 	 */
 	private function hedVerify($keys="")
@@ -53,57 +50,72 @@ class DeptControl extends CI_Controller
 
 		}
 	}
-
-
 	/**
-	 * Notes:部门新增记录
+	 * Notes:新增记录
 	 * User: ljx
-	 * DateTime: 2020/12/24 14:41
+	 *
 	 */
 	public function newRow()
 	{
-		$keys="DeptIcon,ParentId,DeptName,Leader,Phone,Email,Status";
+		$keys="course_name,course_num,course_id";
 		$this->hedVerify($keys);
-		$resultNum = $this->dept->addData($this->dataArr, $this->userArr['Mobile']);
-		if ($resultNum > 0) {
+		$resultNum = $this->courseware->addData($this->dataArr, $this->userArr['Mobile']);
+		if (count($resultNum )> 0) {
 			$resulArr = build_resulArr('D000', true, '插入成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
 			$resulArr = build_resulArr('D002', false, '插入失败', []);
 			http_data(200, $resulArr, $this);
 		}
-
-
 	}
+//上传详情图
+    public function Uploaddetail()
+    {
+        $result = $this->courseware->imageuploaddetail($this->dataArr);
+        if (count($result )> 0) {
+            $resulArr = build_resulArr('D000', true, '插入成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D002', false, '插入失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
+//显示详情图
+    public function finddetail()
+    {
+        $this->hedVerify();//前置验证
+        $result = $this->courseware->getimagedetail($this->dataArr);
+        if (count($result)> 0) {
+            $resulArr = build_resulArr('D000', true, '显示成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D002', false, '显示失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
 
 
-	/**
-	 * Notes:获取部门信息
-	 * User: ljx
-	 * DateTime: 2020/12/25 10:01
-	 */
+//获取
 	public function getRow()
 	{
-		$keys="DeptName,Status,DataScope,powerdept";
-		$this->hedVerify($keys);//前置验证
-		$result = $this->dept->getDept($this->dataArr);
-		if ($result!=[]) {
+		$keys="rows,pages,course_id";
+		$this->hedVerify($keys);
+		$result = $this->courseware->getcourseware($this->dataArr);
+		if (count($result) >= 0) {
 			$resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
 			http_data(200, $resulArr, $this);
 		} else {
 			$resulArr = build_resulArr('D003', false, '获取失败', []);
 			http_data(200, $resulArr, $this);
 		}
-
-
 	}
-
-
+//删除
 	public function delRow()
 	{
-		$keys="DeptId";
+		$keys="course_id,course_num";
 		$this->hedVerify($keys);
-		$result = $this->dept->delDept($this->dataArr, $this->userArr['Mobile']);
+//		$this->hedVerify();
+		$result = $this->courseware->delcourseware($this->dataArr);
 		if (count($result) > 0) {
 			$resulArr = build_resulArr('D000', true, '删除成功', []);
 			http_data(200, $resulArr, $this);
@@ -111,54 +123,20 @@ class DeptControl extends CI_Controller
 			$resulArr = build_resulArr('D003', false, '删除失败', []);
 			http_data(200, $resulArr, $this);
 		}
-
-
 	}
+//修改
 	public function modifyRow()
-	{
-		$keys="DeptId,DeptIcon,DeptName,Leader,Phone,Email,Status";
-		$this->hedVerify($keys);
-		$result = $this->dept->modifyDept($this->dataArr, $this->userArr['Mobile']);
-		if (count($result) > 0) {
-			$resulArr = build_resulArr('D000', true, '修改成功', []);
-			http_data(200, $resulArr, $this);
-		} else {
-			$resulArr = build_resulArr('D003', false, '修改失败', []);
-			http_data(200, $resulArr, $this);
-		}
-
-
-	}
-	public function moveRow()//显示下拉列表成功或者失败
-	{
-		$keys="DeptId";
-		$this->hedVerify($keys);
-		$result = $this->dept->moveDept($this->dataArr);
-		if (count($result) > 0) {
-			$resulArr = build_resulArr('D000', true, '有接收',json_encode($result));
-			http_data(200, $resulArr, $this);
-		} else {
-			$resulArr = build_resulArr('D003', false, '无接收', []);
-			http_data(200, $resulArr, $this);
-		}
-
-
-	}
-
-	public function statusRow()
-	{
-		$keys="DeptId,Status,Display";
-		$this->hedVerify($keys);
-		$result = $this->dept->statusDept($this->dataArr, $this->userArr['Mobile']);
-		if ($result > 0) {
-			$resulArr = build_resulArr('D000', true, '成功', []);
-			http_data(200, $resulArr, $this);
-		} else {
-			$resulArr = build_resulArr('D003', false, '失败', []);
-			http_data(200, $resulArr, $this);
-		}
-
-
-	}
-
+    {
+        $keys="course_num,course_id";
+        $this->hedVerify($keys);
+//		$this->hedVerify();
+        $result = $this->courseware->modifycourseware($this->dataArr, $this->userArr['Mobile']);
+        if (count($result) > 0) {
+            $resulArr = build_resulArr('D000', true, '修改成功', []);
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D003', false, '修改失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
 }
