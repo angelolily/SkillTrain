@@ -34,6 +34,22 @@ function pay($prepayId){
     $js_sdk = $payment->jssdk;
     return $js_sdk->bridgeConfig($prepayId, FALSE);
 }
+// 根据code获取用户信息
+function get_user_wx_info($code,$type){
+    $config = [
+        'app_id' => 'wx5d276a1e3d25bce5',
+        'secret' => '530ba6273fa62b9dcb10658f2231b6b7',
+        'response_type' => 'array',
+        'oauth' => [
+            'scopes'   => [$type],
+            'callback' => '/oauth_callback',
+        ],
+    ];
+    $app = Factory::officialAccount($config);
+    $oauth = $app->oauth;
+    $user = $oauth->userFromCode($code);
+    return $user->getRaw();;
+}
 // 生成商户订单号
 function get_random_id($length,$s_key=''){
     $str = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
