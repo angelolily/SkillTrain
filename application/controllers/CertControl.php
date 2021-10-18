@@ -62,7 +62,7 @@ class CertControl extends CI_Controller
 		$keys="cert_name";
 		$this->hedVerify($keys);
 		$resultNum = $this->cert->addData($this->dataArr, $this->userArr['Mobile']);
-		if (count($resultNum )> 0) {
+		if ($resultNum) {
 			$resulArr = build_resulArr('D000', true, '插入成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
@@ -73,18 +73,29 @@ class CertControl extends CI_Controller
 
 //获取
 	public function getRow()
-	{
-		$keys="rows,pages,cert_name,members_name";
-		$this->hedVerify($keys);
-		$result = $this->cert->getcert($this->dataArr);
-		if (count($result) >= 0) {
-			$resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
-			http_data(200, $resulArr, $this);
-		} else {
-			$resulArr = build_resulArr('D003', false, '获取失败', []);
-			http_data(200, $resulArr, $this);
-		}
-	}
+    {
+        $keys="rows,pages,cert_name,members_name";
+        $this->hedVerify($keys);
+        $result = $this->cert->getcert($this->dataArr);
+        if (count($result) >= 0) {
+            $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+            $url = $base_url.'public/';
+            for($i=0;$i<count($result['data']);$i++){
+                $img_arr = [];
+                $result['data'][$i]['cert_path_show'] = $url.$result['data'][$i]['cert_path'];
+                $pass_img_arr = explode(',',$result['data'][$i]['process_data']);
+                for($j=0;$j<count($pass_img_arr);$j++){
+                    array_push($img_arr,$url.$result['data'][$i]['cert_dir'].'/'.$pass_img_arr[$j]);
+                }
+                $result['data'][$i]['process_data_show']=$img_arr;
+            }
+            $resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D003', false, '获取失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
 
 
 
@@ -122,10 +133,7 @@ class CertControl extends CI_Controller
 
     public function manyimageupload()  //多图片上传
     {
-//        $keys="order_id";
-//        $this->hedVerify($keys);
-//		$this->hedVerify();
-        $result = $this->cert->manyimageupload($this->dataArr);
+		$result = $this->cert->manyimageupload($this->dataArr);
         if (count($result) > 0) {
             $resulArr = build_resulArr('D000', true, '上传成功', json_encode($result));
             http_data(200, $resulArr, $this);
@@ -133,7 +141,6 @@ class CertControl extends CI_Controller
             $resulArr = build_resulArr('D003', false, '上传失败', []);
             http_data(200, $resulArr, $this);
         }
-
     }
 
     public function readmaneypic()  //读取目录下多图片
@@ -160,7 +167,7 @@ class CertControl extends CI_Controller
 //		$this->hedVerify();
         $result = $this->cert->membersdata();
         if ($result) {
-            $resulArr = build_resulArr('D000', true, '下拉成功', []);
+            $resulArr = build_resulArr('D000', true, '下拉成功', $result);
             http_data(200, $resulArr, $this);
         } else {
             $resulArr = build_resulArr('D003', false, '下拉失败', []);

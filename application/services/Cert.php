@@ -100,9 +100,9 @@ class Cert extends HTY_service
 
     public function manyimageupload()//多图片上传
     {
+        $type = $this->input->post('uploadType');
         $resultvalue = array();
         $dddir=time().rand(19,99);
-
         $dir = './public/'.$dddir;
         $pptfiles=[];
         if (is_dir($dir) or mkdir($dir)) {
@@ -122,7 +122,14 @@ class Cert extends HTY_service
                     return $resultvalue;
                 }
             }
-            $resultvalue['process_data']='/public/'.$dddir;
+            $resultvalue['process_data'] = $pptfiles;
+            if($type == '过程'){
+                $resultvalue['cert_dir'] = $dddir;
+            }else{
+                for($i=0;$i<count($resultvalue['process_data']);$i++){
+                    $resultvalue['process_data'][$i] = $dddir.'/'.$resultvalue['process_data'][$i];
+                }
+            }
             return $resultvalue;
         }
     }

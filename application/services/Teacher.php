@@ -23,7 +23,7 @@ class Teacher extends HTY_service
 		$indData['created_by'] = $by;
 		$indData['created_time'] = date('Y-m-d H:i');
 		$indData['teacher_pwd'] = "7cd114fc8432fa2af245048f84d5a29c27c16de0d5ecea8d2fb1a458146b4e3c2444476ae2e293678ebfe671dded74091b8f1faf2322bec4bee0a84a554c24d6J7PnTSCVfGHIkHBTWMqB41MzOytDXaJ1Cj1C0hi3NUM=";
-		$postname=$this->Sys_Model->table_seleRow('teahcer_id',"teacher",array('teacher_phone'=>$indData['teacher_phone']), $like=array());
+		$postname=$this->Sys_Model->table_seleRow('teacher_id',"teacher",array('teacher_phone'=>$indData['teacher_phone']), $like=array());
 		if ($postname){
 			$results = [];
 		    return $results;
@@ -61,7 +61,7 @@ class Teacher extends HTY_service
     public function get_teacherdata($pages,$rows,$wheredata){
         //Select SQL_CALC_FOUND_ROWS UserId,UserName,base_dept.DeptName,Mobile,Birthday,UserStatus,UserEmail,Sex,Remark,IsAdmin,UserRol,UserPost,base_user.CREATED_TIME from base_user,base_dept where base_user.DeptId = base_dept.DeptId
         $offset=($pages-1)*$rows;//计算偏移量
-        $sql_query="Select teacher.*,schedule.class_name,schedule.course_name from teacher left join schedule on teacher.teacher_id=schedule.teacher_id where  1=1  ";
+        $sql_query="Select teacher.*,schedule.class_name,schedule.course_name from teacher where  1=1  ";
         $sql_query_where=$sql_query.$wheredata;
         if($wheredata!="")
         {
@@ -85,15 +85,15 @@ class Teacher extends HTY_service
     {
         $values['updated_by'] = $by;
         $values['updated_time'] = date('Y-m-d H:i');
-        $postname = $this->Sys_Model->table_seleRow('teahcer_id', "teahcer", array('teahcer_phone' => $values['teahcer_phone']), $like = array());
+        $postname = $this->Sys_Model->table_seleRow('teacher_id', "teacher", array('teacher_phone' => $values['teacher_phone']), $like = array());
         $resluts=[];
         if ($postname) {
-            if ($postname[0]['teahcer_id'] == $values['teahcer_id']) {
-                $resluts=$this->Sys_Model->table_updateRow('teahcer', $values, array('teahcer_id' => $values['teahcer_id']));
+            if ($postname[0]['teacher_id'] == $values['teacher_id']) {
+                $resluts=$this->Sys_Model->table_updateRow('teacher', $values, array('teacher_id' => $values['teacher_id']));
             }
             return $resluts;
         }
-        $resluts=$this->Sys_Model->table_updateRow('teahcer', $values, array('teahcer_id' => $values['teahcer_id']));
+        $resluts=$this->Sys_Model->table_updateRow('teacher', $values, array('teacher_id' => $values['teacher_id']));
         return $resluts;
     }
 
@@ -102,7 +102,7 @@ class Teacher extends HTY_service
     {
         $values['updated_by'] = $by;
         $values['updated_time'] = date('Y-m-d H:i');
-        $resluts=$this->Sys_Model->table_updateRow('teahcer', $values, array('teahcer_id' => $values['teahcer_id']));
+        $resluts=$this->Sys_Model->table_updateRow('teacher', $values, array('teacher_id' => $values['teacher_id']));
         return $resluts;
     }
 
