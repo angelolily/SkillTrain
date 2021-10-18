@@ -1,16 +1,10 @@
 <?php
-/*
- * @Author: your name
- * @Date: 2021-09-22 11:19:11
- * @LastEditTime: 2021-09-29 17:30:30
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: \SkillTrain\application\config\routes\yjl.php
- */
 $route['ci/get_info'] = 'CourseInfoControl/get_course_info';// 获取课程信息
 
 $route['uo/set_f'] = 'UserOrderControl/set_enroll_form';// 存储报名表信息
 $route['uo/get_e'] = 'UserOrderControl/get_enroll_info';// 获取报名表信息
+
+$route['ac/cp'] = 'WxPayControl/send_message';// 发送验证短信
 
 $route['pay/login'] = 'WxPayControl/login';// 测试登陆
 $route['pay/prepay'] = 'WxPayControl/get_prepay_id';// 获取prepay_id数据

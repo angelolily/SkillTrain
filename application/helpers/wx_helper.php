@@ -34,6 +34,12 @@ function pay($prepayId){
     $js_sdk = $payment->jssdk;
     return $js_sdk->bridgeConfig($prepayId, FALSE);
 }
+// 调起sdk支付信息
+function pay_gzh($prepayId){
+    $payment = Factory::payment($GLOBALS['config']);
+    $js_sdk = $payment->jssdk;
+    return $js_sdk->sdkConfig($prepayId, FALSE);
+}
 // 根据code获取用户信息
 function get_user_wx_info($code,$type){
     $config = [
@@ -49,6 +55,17 @@ function get_user_wx_info($code,$type){
     $oauth = $app->oauth;
     $user = $oauth->userFromCode($code);
     return $user->getRaw();;
+}
+// 请求JSSDK接口
+function request_jssdk($APIs,$debug,$url){
+    $config = [
+        'app_id' => 'wx5d276a1e3d25bce5',
+        'secret' => '530ba6273fa62b9dcb10658f2231b6b7',
+        'response_type' => 'array'
+    ];
+    $app = Factory::officialAccount($config);
+    $app->jssdk->setUrl($url);
+    return $app->jssdk->buildConfig($APIs, $debug);
 }
 // 生成商户订单号
 function get_random_id($length,$s_key=''){
