@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '124.70.77.122',
-	'username' => 'htysg',
-	'password' => 'htysgabc',
+	'hostname' => '119.3.168.222',
+	'username' => 'skill',
+	'password' => 'htyabc',
 	'database' => 'skilltraindb',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
