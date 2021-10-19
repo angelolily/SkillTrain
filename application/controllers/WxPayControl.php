@@ -37,10 +37,10 @@ class WxPayControl extends CI_Controller{
         $res = $this->wxpay->user_login_with_code($user_wx['openid']);
         if(!$res){
             set_reids_key($url_param[1],json_encode($user_wx),0,86400);
-            header('Location: http://localhost:8080/#/login');
+            header('Location: https://admin.wd-jk.com/#/login');
         }
         set_reids_key($url_param[1],json_encode($res[0]),0,86400);
-        header('Location: http://localhost:8080/#/my');
+        header('Location: https://admin.wd-jk.com/#/my');
     }
     // 根据账号密码登陆并在需要时更新openid
     public function user_login(){
@@ -93,8 +93,9 @@ class WxPayControl extends CI_Controller{
             $resultArr = build_resultArr('UR002', FALSE, 0,'NOT FOUND USER', null );
             http_data(200, $resultArr, $this);
         }
-        set_reids_key($this->receive_data['token'],json_encode($user_info[0]),0,86400);
-        $resultArr = build_resultArr('UR000', TRUE, 0, "OK", $user_info[0]);
+        $token = $this->receive_data['token'];
+        set_reids_key($token,json_encode($user_info[0]),0,86400);
+        $resultArr = build_resultArr('UR000', TRUE, 0, "OK", $token);
         http_data(200, $resultArr, $this);
     }
     // 根据token获取存储的用户信息

@@ -29,6 +29,7 @@
         }
         public function user_reg($reg_info,$wx_info){
             $new_date = array(
+                'members_nickname'=>$wx_info['nickname'],
                 'members_openid'=>$wx_info['openid'],
                 'members_photo'=>$wx_info['headimgurl'],
                 'members_name'=>$reg_info['members_name'],
