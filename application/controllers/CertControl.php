@@ -73,7 +73,7 @@ class CertControl extends CI_Controller
 
 //获取
 	public function getRow()
-    {
+	{
         $keys="rows,pages,cert_name,members_name";
         $this->hedVerify($keys);
         $result = $this->cert->getcert($this->dataArr);

@@ -80,7 +80,7 @@ class MessageControl extends CI_Controller
 
     }
 
-    /**
+        /**
      * Notes:新增消息
      * User: lchangelo
      * DateTime: 2021/09/28 15:39
@@ -125,6 +125,7 @@ class MessageControl extends CI_Controller
         }
 
     }
+
 
     /**
      * Notes:获取考勤主表
@@ -178,7 +179,8 @@ class MessageControl extends CI_Controller
         $qrsave="./public/qrclass/".$filenamne.".png";
         buildQr($this->dataArr['qrtext'],$qrsave);
         if(file_exists($qrsave)){
-            $result['qrpath']="http://124.70.77.122/SkillTrain/public/qrclass/".$filenamne.".png";
+            $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+            $result['qrpath']=$base_url."/public/qrclass/".$filenamne.".png";
             $resulArr = build_resulArr('D000', true, '生成成功成功', json_encode($result));
             http_data(200, $resulArr, $this);
         }

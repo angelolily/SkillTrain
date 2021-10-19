@@ -32,15 +32,18 @@ class WxPayControl extends CI_Controller{
     }
     // 根据微信授权code登陆
     public function user_login_with_code(){
-        $url_param = get_url_param();
+        $url_param = $this->get_url_param();
         $user_wx = get_user_wx_info($url_param[0],'snsapi_userinfo');
         $res = $this->wxpay->user_login_with_code($user_wx['openid']);
         if(!$res){
             set_reids_key($url_param[1],json_encode($user_wx),0,86400);
-            header('Location: https://admin.wd-jk.com/#/login');
+            $url = urlencode('http://gzh.wd-jk.com/#/login');
+            $aim_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5d276a1e3d25bce5&redirect_uri="
+                        .$url
+                        ."&response_type=code&scope=snsapi_base&state=ZJT#wechat_redirect";
         }
         set_reids_key($url_param[1],json_encode($res[0]),0,86400);
-        header('Location: https://admin.wd-jk.com/#/my');
+        header('Location: http://gzh.wd-jk.com/#/my');
     }
     // 根据账号密码登陆并在需要时更新openid
     public function user_login(){
@@ -74,7 +77,7 @@ class WxPayControl extends CI_Controller{
         http_data(200, $resultArr, $this);
     }
     // 用户注册
-    public function user_reg(){
+    public function user_register(){
         $code = $this->receive_data['code'];
         $user_wx_info = get_user_wx_info($code,'snsapi_userinfo');
         $user_wx_info['sex'] = $user_wx_info['sex'] == 1 ? '男' : '女';

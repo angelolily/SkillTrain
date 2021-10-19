@@ -12,7 +12,6 @@ class CustomeInterface extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->service('WechatLoginRegister');
         $this->load->service('wProductStore');
         $this->load->helper('tool');
     }
