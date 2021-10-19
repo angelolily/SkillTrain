@@ -83,7 +83,7 @@ class CourseInfoControl extends CI_Controller{
             http_data(204, $resultArr, $this);
         }
         $final_res = $res;
-        $base_url='http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+        $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
         for($i=0; $i<count($final_res); $i++){
             if(array_key_exists('course_cover',$final_res[$i])){
                 $final_res[$i]['course_cover'] = $base_url.'public/coursecover/'.$final_res[$i]['course_cover'];

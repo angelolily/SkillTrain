@@ -27,7 +27,7 @@ class UserOrderControl  extends CI_Controller{
             http_data(204, $resultArr, $this);
         }
         $img_arr = [];
-        $base_url='http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+        $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
         if(array_key_exists('sign_picture',$res[0])){
             array_push($img_arr,array('sign_picture'=>$base_url.'public/enroll/'.$res[0]['sign_image'].'/'.$res[0]['sign_picture']));
         }

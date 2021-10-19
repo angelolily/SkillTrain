@@ -138,7 +138,7 @@ class Cert extends HTY_service
     public function readmaneypic($values)//读取目录下多图片
     {
         $res_url = [];
-        $base_url='http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
+        $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
         $dir_name = $values['process_data'];
         $dir = '.'.$dir_name;
         if(file_exists($dir)){
