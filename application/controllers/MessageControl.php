@@ -84,23 +84,30 @@ class MessageControl extends CI_Controller
      * Notes:新增消息
      * User: lchangelo
      * DateTime: 2021/09/28 15:39
+     * Modify:lchangelo 将签名串从data中摘除
+     * DateTime: 2021/10/18 16:08
      */
     public function  addMessageinfo(){
         //$keys="class_id,members_id,members_openid,members_name,message_title,message_center";
         $ins_data=[];
+        $temdata=[];
         $receiveArr = file_get_contents('php://input');
 
         $data_arr=json_decode($receiveArr,true);
 
         if(count($data_arr)>0)
         {
+            $phone=$data_arr['phone'];
             foreach ($data_arr['data'] as $rows){
-                $rows['created_by']=$rows['phone'];
-                $rows['created_time']=date("Y-m-d H:i:s");
-                $rows = bykey_reitem($rows, 'phone');
-                $rows= bykey_reitem($rows, 'timestamp');
-                $rows = bykey_reitem($rows, 'signature');
-                array_push($ins_data,$rows);
+                $temdata['created_by']=$phone;
+                $temdata['created_time']=date("Y-m-d H:i:s");
+                $temdata['class_id']=$rows['class_id'];
+                $temdata['members_id']=$rows['members_id'];
+                $temdata['members_openid']=$rows['members_openid'];
+                $temdata['members_name']=$rows['members_name'];
+                $temdata['message_title']=$rows['message_title'];
+                $temdata['message_center']=$rows['message_center'];
+                array_push($ins_data,$temdata);
             }
             $result = $this->msgservice->addMessage($ins_data);
         }
