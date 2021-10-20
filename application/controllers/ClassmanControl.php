@@ -98,7 +98,7 @@ class ClassmanControl extends CI_Controller
     //获取排课表
     public function getscheduleRow()
     {
-        $keys="rows,pages,class_id";
+        $keys="class_id";
         $this->hedVerify($keys);
         $result = $this->classman->getschedule($this->dataArr);
         if (count($result) >= 0) {

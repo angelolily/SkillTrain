@@ -1,6 +1,7 @@
 {
     "require": {
         "php": ">=7.4",
+        "tencentcloud/tencentcloud-sdk-php": "^3.0",
         "overtrue/wechat": "^5.0",
         "ext-fileinfo": "*",
         "ext-openssl": "*",

@@ -1,6 +1,11 @@
 <?php
 $route['ci/get_info'] = 'CourseInfoControl/get_course_info';// 获取课程信息
 
+$route['uo/set_f'] = 'UserOrderControl/set_enroll_form';// 存储报名表信息
+$route['uo/get_e'] = 'UserOrderControl/get_enroll_info';// 获取报名表信息
+
+$route['ac/cp'] = 'WxPayControl/send_message';// 发送验证短信
+
 $route['pay/login'] = 'WxPayControl/login';// 测试登陆
 $route['pay/prepay'] = 'WxPayControl/get_prepay_id';// 获取prepay_id数据
 $route['pay/update'] = 'WxPayControl/update_order_info';// 未付款订单付款后更新订单

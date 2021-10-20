@@ -330,7 +330,7 @@ class Dept extends HTY_service
 		foreach ($resultDept as $item){
 			$resultUser['UserDept']=$item['DeptId'];
 			if($item['Status']=="0"){//判断部门是否启用
-				$resultUser['UserStatus']="1";//启用部门下用户
+				$resultUser['UserStatus']="1";//启用部门下用户a
 			}else{
 				$resultUser['UserStatus']="0";//停用部门下用户
 			}

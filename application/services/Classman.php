@@ -51,10 +51,14 @@ class Classman extends HTY_service
             $this->Sys_Model->table_addRow("schedule", $resluts, 2);
             $sql2 = "" . $indData['c'][0]['members_id'];
             foreach ($indData['c'] as $item) {
+                if($item['members_id']==$indData['c'][0]['members_id']){
+                    break;
+                }
                 $sql2 = $sql2 . "," . $item['members_id'];
             }
-            $sql = "update sign_up set sign_class = '1' where course_id=" . $indData['c'][0]['course_id'] . " and members_id in (" . $sql2 . ")";
-            $this->Sys_Model->execute_sql($sql);
+            $sql = "update sign_up set sign_class = '1' where sign_competition_id=  '" . $indData['b'][0]['course_id'] . "' and members_id in (" . $sql2 . ")";
+            $this->Sys_Model->execute_sql($sql,2);
+
             $row = $this->db->affected_rows();
             if (($this->db->trans_status() === FALSE) && $row <= 0) {
                 $this->db->trans_rollback();
@@ -70,20 +74,76 @@ class Classman extends HTY_service
     //选择人员加入班级排课的下拉
     public function membersdata($indData)
     {
-        $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名", "sign_class" => "0"), $like = array());
-        $sql = "" . $result[0]['members_id'];
-        foreach ($result as $item) {
-            $sql = $sql . "," . $item['members_id'];
+        if($indData['ID']=="true"){
+        $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
+        if($result){
+            $sql = "" . $result[0]['members_id'];
+            foreach ($result as $item) {
+                $sql = $sql . "," . $item['members_id'];
+            }
+            $pages = $indData['pages'];
+            $rows = $indData['rows'];
+            $offset=($pages-1)*$rows;//计算偏移量
+            $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
+            $results['data'] = $this->Sys_Model->execute_sql($sql1);
+            $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
+            $resul = $this->Sys_Model->execute_sql($sql2);
+            $results['total']=count($resul);
+            return $results;
+        }else{
+            return $result;
         }
-        $pages = $indData['pages'];
-        $rows = $indData['rows'];
-        $offset=($pages-1)*$rows;//计算偏移量
-        $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
-        $results['data'] = $this->Sys_Model->execute_sql($sql1);
-        $sql = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
-        $resul = $this->Sys_Model->execute_sql($sql);
-        $results['total']=count($resul);
-        return $results;
+    }else{
+            $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名", "sign_class" => "1"), $like = array());
+            if($result) {
+                $sql = "" . $result[0]['members_id'];
+                foreach ($result as $item) {
+                    $sql = $sql . "," . $item['members_id'];
+                }
+                $pages = $indData['pages'];
+                $rows = $indData['rows'];
+                $offset = ($pages - 1) * $rows;//计算偏移量
+                $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit " . $offset . "," . $rows;
+                $results['data'] = $this->Sys_Model->execute_sql($sql1);
+                $result1 = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
+
+                $sqll = "" . $result1[0]['members_id'];
+                foreach ($result1 as $item) {
+                    $sqll= $sqll . "," . $item['members_id'];
+                }
+                $pages = $indData['pages'];
+                $rows = $indData['rows'];
+                $offset = ($pages - 1) * $rows;//计算偏移量
+                $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sqll . ")  limit ".$offset.",".$rows;
+                $results['alldata'] = $this->Sys_Model->execute_sql($sql2);
+                $sql3 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sqll . ") ";
+                $resul = $this->Sys_Model->execute_sql($sql3);
+                $results['total']=count($resul);
+                return  $results;
+            }else{
+                $result1 = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
+                if($result1){
+                    $sql = "" . $result1[0]['members_id'];
+                    foreach ($result1 as $item) {
+                        $sql = $sql . "," . $item['members_id'];
+                    }
+                    $pages = $indData['pages'];
+                    $rows = $indData['rows'];
+                    $offset = ($pages - 1) * $rows;//计算偏移量
+                    $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
+                    $results['alldata'] = $this->Sys_Model->execute_sql($sql2);
+                    $sql3 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
+                    $resul = $this->Sys_Model->execute_sql($sql3);
+                    $results['total']=count($resul);
+                    $results['data']=[];
+                    return $results;
+                }
+                else{
+                    return $result1;
+                }
+
+            }
+        }
     }
 
     //获取班级表
@@ -135,32 +195,26 @@ class Classman extends HTY_service
         $like = "";
         if (count($searchWhere) > 0) {
             $like = $like . " and  class_id =  '" . $searchWhere['class_id'] . "'";
-            $pages = $searchWhere['pages'];
-            $rows = $searchWhere['rows'];
-            $deptTmpArr = $this->get_scheduledata($pages, $rows, $like);
+            $deptTmpArr = $this->get_scheduledata($like);
         }
         return $deptTmpArr;
     }
 
 //搜索排课表
-    public function get_scheduledata($pages, $rows, $wheredata)
+    public function get_scheduledata($wheredata)
     {
         //Select SQL_CALC_FOUND_ROWS UserId,UserName,base_dept.DeptName,Mobile,Birthday,UserStatus,UserEmail,Sex,Remark,IsAdmin,UserRol,UserPost,base_user.CREATED_TIME from base_user,base_dept where base_user.DeptId = base_dept.DeptId
-        $offset = ($pages - 1) * $rows;//计算偏移量
-        $sql_query = "Select DISTINCT class_id,course_name,class_num,school_time,home_time,class_romm,teacher,rate from schedule  where  1=1  ";
+        $sql_query = "Select DISTINCT class_id,course_name,class_num,school_time,home_time,class_romm,teacher,rate,members_name,members_id,members_openid,members_phone from schedule  where  1=1  ";
         $sql_query_where = $sql_query . $wheredata;
         if ($wheredata != "") {
             $sql_query = $sql_query_where;
         }
         $sql_query_total = $sql_query;
-        $sql_query = $sql_query . " order by class_num desc limit " . $offset . "," . $rows;
+        $sql_query = $sql_query . " order by class_num ";
         $query = $this->db->query($sql_query);
         $ss = $this->db->last_query();
-        $r_total = $this->db->query($sql_query_total)->result_array();
         $row_arr = $query->result_array();
-        $result['total'] = count($r_total);//获取总行数
-        $result["data"] = $row_arr;
-        $result["alldata"] = $r_total;
+        $result= $row_arr;
         return $result;
     }
 
@@ -189,18 +243,22 @@ class Classman extends HTY_service
         $postname = $this->Sys_Model->table_seleRow('class_id', "class_group", array('class_name' => $values['a']['class_name']), $like = array());//比对班级名称是否修改
         if ($postname) {
             if ($postname[0]['class_id'] == $values['a']['class_id']) {
-                if ($values['a']['ID'] == "true") {
+                if ($values['a']['ID'] == "false") {
                     $returnInfo = true;
                     $this->db->trans_begin();
                     $values['a'] = bykey_reitem($values['a'], 'ID');
+//                    $values['a'] = bykey_reitem($values['a'], 'class_id');
                     $this->Sys_Model->table_updateRow('class_group', $values['a'], array('class_id' => $values['a']['class_id']));//修改班级信息
                     $sign_class = $this->Sys_Model->table_seleRow('members_id', "schedule", array('class_id' => $values['a']['class_id']), $like = array());//查出所有会员id（并没有去重）
                     $items_class = [];
-                    foreach ($sign_class as $ite) {
-                        $ite['sign_class'] = "0";
-                        array_push($items_class, $ite);
+                    array_unique($sign_class,SORT_REGULAR);
+                    if($sign_class){
+                        foreach ($sign_class as $ite) {
+                            $ite['sign_class'] = "0";
+                            array_push($items_class, $ite);
+                        }
+                        $this->Sys_Model->table_updateBatchRow("sign_up", $items_class, "members_id");
                     }
-                    $this->Sys_Model->table_updateBatchRow("members", $items_class, "members_id");
 //将人员与班级解绑
                     $this->Sys_Model->table_del("schedule", array('class_id' => $values['a']['class_id']));
 //删除排课表所有相关排课
@@ -211,6 +269,7 @@ class Classman extends HTY_service
                             $re = $row;
                             $re['create_by'] = $by;
                             $re['class_id'] = $values['a']['class_id'];
+                            $re['course_id'] = $values['a']['course_id'];
                             $re['members_id'] = $item['members_id'];
                             $re['members_name'] = $item['members_name'];
                             $re['members_phone'] = $item['members_phone'];
@@ -223,10 +282,13 @@ class Classman extends HTY_service
                     $this->Sys_Model->table_addRow("schedule", $resluts, 2);
                     $sql2 = "" . $values['c'][0]['members_id'];
                     foreach ($values['c'] as $item) {
+                        if($item['members_id']==$values['c'][0]['members_id']){
+                            continue;
+                        }
                         $sql2 = $sql2 . "," . $item['members_id'];
                     }
-                    $sql = "update sign_up set sign_class = '1' where course_id=" . $values['c'][0]['course_id'] . " and members_id in (" . $sql2 . ")";
-                    $this->Sys_Model->execute_sql($sql);
+                    $sql = "update sign_up set sign_class = '1' where sign_competition_id= '" . $values['a']['course_id'] . "' and members_id in (" . $sql2 . ")";
+                    $this->Sys_Model->execute_sql($sql,2);
                     //重新树立绑定标识
                     $row = $this->db->affected_rows();
                     if (($this->db->trans_status() === FALSE) && $row <= 0) {
@@ -243,18 +305,21 @@ class Classman extends HTY_service
                 }
             }
         } else {
-            if ($values['a']['ID'] == "true") {
+            if ($values['a']['ID'] == "false") {
                 $returnInfo = true;
                 $this->db->trans_begin();
                 $values['a'] = bykey_reitem($values['a'], 'ID');
                 $this->Sys_Model->table_updateRow('class_group', $values['a'], array('class_id' => $values['a']['class_id']));//修改班级信息
                 $sign_class = $this->Sys_Model->table_seleRow('members_id', "schedule", array('class_id' => $values['a']['class_id']), $like = array());//查出所有会员id（并没有去重）
                 $items_class = [];
-                foreach ($sign_class as $ite) {
-                    $ite['sign_class'] = "0";
-                    array_push($items_class, $ite);
+                array_unique($sign_class,SORT_REGULAR);
+                if($sign_class){
+                    foreach ($sign_class as $ite) {
+                        $ite['sign_class'] = "0";
+                        array_push($items_class, $ite);
+                    }
+                    $this->Sys_Model->table_updateBatchRow("sign_up", $items_class, "members_id");
                 }
-                $this->Sys_Model->table_updateBatchRow("members", $items_class, "members_id");
 //将人员与班级解绑
                 $this->Sys_Model->table_del("schedule", array('class_id' => $values['a']['class_id']));
 //删除排课表所有相关排课
@@ -265,6 +330,7 @@ class Classman extends HTY_service
                         $re = $row;
                         $re['create_by'] = $by;
                         $re['class_id'] = $values['a']['class_id'];
+                        $re['course_id'] = $values['a']['course_id'];
                         $re['members_id'] = $item['members_id'];
                         $re['members_name'] = $item['members_name'];
                         $re['members_phone'] = $item['members_phone'];
@@ -277,10 +343,13 @@ class Classman extends HTY_service
                 $this->Sys_Model->table_addRow("schedule", $resluts, 2);
                 $sql2 = "" . $values['c'][0]['members_id'];
                 foreach ($values['c'] as $item) {
+                    if($item['members_id']==$values['c'][0]['members_id']){
+                        continue;
+                    }
                     $sql2 = $sql2 . "," . $item['members_id'];
                 }
-                $sql = "update sign_up set sign_class = '1' where course_id=" . $values['c'][0]['course_id'] . " and members_id in (" . $sql2 . ")";
-                $this->Sys_Model->execute_sql($sql);
+                $sql = "update sign_up set sign_class = '1' where sign_competition_id='" . $values['a']['course_id'] . "' and members_id in (" . $sql2 . ")";
+                $this->Sys_Model->execute_sql($sql,2);
                 //重新树立绑定标识
                 $row = $this->db->affected_rows();
                 if (($this->db->trans_status() === FALSE) && $row <= 0) {

@@ -65,7 +65,7 @@ class SignControl extends CI_Controller
 	 */
 	public function getRow()
 	{
-		$keys="pages,rows,sign_name,sign_card_num,sign_competition_id,powerdept,DeptId,DataScope";
+		$keys="pages,rows,sign_competition_id,powerdept";
 		$this->hedVerify($keys);
 		$result = $this->sign->getSign($this->dataArr);
 		if (count($result) >= 0) {

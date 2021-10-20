@@ -66,6 +66,23 @@ class ScheduleControl extends CI_Controller
 			http_data(200, $resulArr, $this);
 		}
 	}
+
+//根据班级ID搜索排课表
+    public function getmemberRow()
+    {
+        $keys="rows,pages,class_id";
+        $this->hedVerify($keys);
+        $result = $this->schedule->getmembersh($this->dataArr);
+        if (count($result) >= 0) {
+            $resulArr = build_resulArr('D000', true, '获取成功', json_encode($result));
+            http_data(200, $resulArr, $this);
+        } else {
+            $resulArr = build_resulArr('D003', false, '获取失败', []);
+            http_data(200, $resulArr, $this);
+        }
+    }
+
+
 	public function modifyRow()
     {
         $keys="schedule_id";

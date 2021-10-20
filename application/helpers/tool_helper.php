@@ -86,7 +86,7 @@ function arrayGbkToUtf8($val=[])
 function http_data($statue,$HttpData=[],$CI)
 {
 	$CI->output
-		->set_header('access-control-allow-headers: Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With,transformrequest')
+        ->set_header('access-control-allow-headers: Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With,transformrequest')
 		->set_header('access-control-allow-methods: GET, POST, PUT, DELETE, HEAD, OPTIONS')
 		->set_header('access-control-allow-credentials: true')
 		->set_header('access-control-allow-origin: *')
