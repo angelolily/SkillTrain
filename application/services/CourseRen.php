@@ -15,13 +15,8 @@ class CourseRen extends HTY_service
     }
     public function getSchedule($val)
     {
-<<<<<<< HEAD
-        $base_url='http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
-        $field="a.school_time,a.home_time,a.sign_time,a.signup_time,a.class_romm,a.teacher_name,b.class_name,c.course_name,c.course_describe,c.course_status,c.course_cover";
-=======
         $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
         $field="a.school_time,a.home_time,a.sign_time,a.signup_time,a.class_romm,a.teacher,b.class_name,c.course_name,c.course_describe,c.course_status,c.course_cover";
->>>>>>> 865098945f22f061bd863355449f28d3a332b52b
         $sql="select {$field} from schedule as a left join class_group as b on a.class_id=b.class_id left join course as c on b.course_id=c.course_id where a.members_id='{$val['members_id']}' order by a.school_time asc";
         $allData=$this->Sys_Model->execute_sql($sql);
         for($i=0;$i<count($allData);$i++){

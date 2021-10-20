@@ -74,27 +74,6 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-<<<<<<< HEAD
-    'dsn'	=> '',
-    'hostname' => '119.3.168.222',
-    'username' => 'skill',
-    'password' => 'htyabc',
-    'database' => 'skilltraindb',
-    'dbdriver' => 'mysqli',
-    'dbprefix' => '',
-    'pconnect' => false,
-    'db_debug' => (ENVIRONMENT !== 'production'),
-    'cache_on' => false,
-    'cachedir' => '',
-    'char_set' => 'utf8',
-    'dbcollat' => 'utf8_general_ci',
-    'swap_pre' => '',
-    'encrypt' => FALSE,
-    'compress' => FALSE,
-    'stricton' => FALSE,
-    'failover' => array(),
-    'save_queries' => TRUE
-=======
 	'dsn'	=> '',
 	'hostname' => '119.3.168.222',
 	'username' => 'skill',
@@ -114,5 +93,4 @@ $db['default'] = array(
 	'stricton' => FALSE,
 	'failover' => array(),
 	'save_queries' => TRUE
->>>>>>> 865098945f22f061bd863355449f28d3a332b52b
 );
