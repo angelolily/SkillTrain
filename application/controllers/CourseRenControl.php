@@ -57,6 +57,16 @@ class CourseRenControl extends CI_Controller{
             http_data(200, $resultArr, $this);
         }
     }
+    public function getTeacherSchedule(){
+        $result = $this->courseren->getTeacherSchedule($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('gs000', true, 0,'获取成功',json_encode($result) );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('gs002', false, 0,'获取失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
     /**
      * @OA\Post(
      *    tags={"hyr"},
@@ -102,6 +112,16 @@ class CourseRenControl extends CI_Controller{
             http_data(200, $resultArr, $this);
         } else {
             $resultArr = build_resultArr('gc002', false, 0,'获取失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
+    public function getOrder(){
+        $result = $this->courseren->getOrder($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('go000', true, 0,'获取成功',json_encode($result) );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('go002', false, 0,'获取失败', []);
             http_data(200, $resultArr, $this);
         }
     }
