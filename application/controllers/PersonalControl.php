@@ -104,7 +104,7 @@ class PersonalControl extends CI_Controller
 		$keys="Mobile,image";
 		$this->hedVerify($keys);
 		$result = $this->personal->headPortrait($this->dataArr,$this->userArr['Mobile']);
-		if (count($result) > 0) {
+		if ($result) {
 			$resulArr = build_resulArr('D000', true, '显示成功', $result);
 			http_data(200, $resulArr, $this);
 		} else {

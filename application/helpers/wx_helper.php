@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once 'vendor/autoload.php';
 use EasyWeChat\Factory;
 
-global $config;
+global $config,$app_config;
 $config = [
     'app_id'             => 'wx5d276a1e3d25bce5',
     'mch_id'             => '1602861157',
@@ -18,6 +18,23 @@ $config = [
 
     'sandbox'            => false
 ];
+$app_config = [
+    'app_id' => 'wx5d276a1e3d25bce5',
+    'secret' => '530ba6273fa62b9dcb10658f2231b6b7',
+    'response_type' => 'array',
+];
+// 验证服务器
+function check_serve(){
+    $config = [
+        'app_id' => 'wx5d276a1e3d25bce5',
+        'secret' => '530ba6273fa62b9dcb10658f2231b6b7',
+        'token' => 'HTYZJT',
+        'response_type' => 'array'
+    ];
+    $app = Factory::officialAccount($config);
+    $response = $app->server->serve();
+    $response->send();exit;
+}
 // 获取统一订单id
 function get_prepay_id($id,$price,$openid,$description){
     $pay = Factory::payment($GLOBALS['config']);
@@ -54,10 +71,15 @@ function get_user_wx_info($code,$type){
     $app = Factory::officialAccount($config);
     $oauth = $app->oauth;
     $user = $oauth->userFromCode($code);
-    return $user->getRaw();;
+    if(!$user['attributes']["id"]){
+        return false;
+    }else{
+        return $user->getRaw();
+    }
+    // return $user->getRaw();
 }
 // 请求JSSDK接口
-function request_jssdk($APIs,$debug,$url){
+function request_jssdk($APIs,$debug,$url,$beta = false, $json = true, $openTagList = []){
     $config = [
         'app_id' => 'wx5d276a1e3d25bce5',
         'secret' => '530ba6273fa62b9dcb10658f2231b6b7',
@@ -65,7 +87,30 @@ function request_jssdk($APIs,$debug,$url){
     ];
     $app = Factory::officialAccount($config);
     $app->jssdk->setUrl($url);
-    return $app->jssdk->buildConfig($APIs, $debug);
+    return $app->jssdk->buildConfig($APIs, $debug, $beta, $json, $openTagList);
+}
+// 发送模板消息
+function send_model_msg($data){
+    $app = Factory::officialAccount($GLOBALS['app_config']);
+    $app->template_message->send([
+        'touser' => $data['openid'],
+        'template_id' => $data['template_id'],
+        'url' => $data['aim_page'],
+        'miniprogram' => $data['aim_miniprogram'],
+        'data' => $data['msg_body'],
+    ]);
+}
+// 获取当前菜单
+function get_menu_now(){
+    $app = Factory::officialAccount($GLOBALS['app_config']);
+//    return $app->menu->list();
+//    return $app->menu->current();
+    return $app->material->list('image', 0, 20);
+}
+// 设置菜单
+function set_menu($menu){
+    $app = Factory::officialAccount($GLOBALS['app_config']);
+    return $app->menu->create($menu);
 }
 // 生成商户订单号
 function get_random_id($length,$s_key=''){

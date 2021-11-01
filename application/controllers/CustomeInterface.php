@@ -49,7 +49,7 @@ class CustomeInterface extends CI_Controller
 
             }
             $pptfiles=join(',',$pptfiles);
-            $resultvalue['Advert_image']="https://hftx.fzz.cn/public/advert/".$pptfiles;
+            $resultvalue['Advert_image']="https://admin.wd-jk.com/public/advert/".$pptfiles;
             http_data(200, $resultvalue, $this);
         }
     }

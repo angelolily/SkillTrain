@@ -8,10 +8,16 @@ class UserOrderControl  extends CI_Controller{
         $receive = file_get_contents('php://input');
         $this->receive_data = json_decode($receive, true);
     }
+    // 生成订单与报名信息
     public function set_enroll_form(){
 //        $sign_id = create_guid();
 //        $this->receive_data['enroll_form']['sign_id'] = $sign_id;
+        $this->receive_data['enroll_form']['sign_created_time'] = date('Y-m-d H:i:s');
+        $this->receive_data['enroll_form']['sign_created_by'] = "ZPTSys";
         $this->receive_data['order_form']['order_datetime'] = date('Y-m-d H:i:s');
+        $this->receive_data['order_form']['created_time'] = date('Y-m-d H:i:s');
+        $this->receive_data['order_form']['created_by'] = "ZPTSys";
+        $this->receive_data['order_form']['order_customer_name'] = $this->receive_data['enroll_form']['sign_name'];
         $res = $this->userorder->set_enroll_form($this->receive_data);
         if(!$res){
             $resultArr = build_resultArr('SEF001', FALSE, 204,'报名信息存储错误', null );
@@ -20,6 +26,7 @@ class UserOrderControl  extends CI_Controller{
         $resultArr = build_resultArr('SEF000', TRUE, 0,'报名信息存储成功', $res );
         http_data(200, $resultArr, $this);
     }
+    // 获取报名信息
     public function get_enroll_info(){
         $res = $this->userorder->get_enroll_info($this->receive_data);
         if(!$res){

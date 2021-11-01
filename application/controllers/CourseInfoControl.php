@@ -98,7 +98,43 @@ class CourseInfoControl extends CI_Controller{
         $resultArr = build_resultArr('GCI000', TRUE, 0,'获取课程信息成功', $final_res );
         http_data(200, $resultArr, $this);
     }
-    public function test(){
 
+    /**
+     * @OA\Post(
+     *    tags={"yjl"},
+     *    path="ci/get_banner",
+     *    summary="获取首页轮播图",
+     *	@OA\RequestBody(
+     *		@OA\MediaType(
+     *            mediaType="application/json",
+     *        )
+     *    ),
+     *	@OA\Response(
+     *        response=200,
+     *        description="正确返回",
+     *		@OA\JsonContent(
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="Data",
+     *                    type="arrary/object",
+     *                    description="轮播图信息"
+     *                )
+     *            ),
+     *            example=[{
+     *                "banner_url":"https://admin.wd-jk.com/SkillTrain/public/advert/163514568437.jpg"
+     *                "banner_page":"http://gzh.wd-jk.com/#/course/detail/B49C8046-450C-68FB-0E37-DA3E2C5BFB8F"
+     *            }]
+     *        )
+     *    ),
+     * )
+     **/
+    public function get_index_banner(){
+        $res = $this->courseinfo->get_index_banner();
+        if(!$res){
+            $resultArr = build_resultArr('GIB001', FALSE, 204,'获取课程信息错误', null );
+            http_data(204, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('GIB000', TRUE, 0,'获取课程信息成功', $res );
+        http_data(200, $resultArr, $this);
     }
 }

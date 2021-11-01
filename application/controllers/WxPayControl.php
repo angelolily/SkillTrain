@@ -10,7 +10,6 @@ class WxPayControl extends CI_Controller{
         $this->load->helper('redis');
         $this->load->service('WxPay');
         $this->load->library('encryption');
-        
         $receive = file_get_contents('php://input');
         $this->receive_data = json_decode($receive, TRUE);
     }
@@ -19,18 +18,48 @@ class WxPayControl extends CI_Controller{
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
         $nonce = $_GET["nonce"];
+        $echostr = $_GET["echostr"];
         $token = "HTYZJT";
         $tmpArr = array($token, $timestamp, $nonce);
         sort($tmpArr, SORT_STRING);
         $tmpStr = implode( $tmpArr );
         $tmpStr = sha1( $tmpStr );
         if( $tmpStr == $signature ){
-            return true;
+            if($echostr){
+                header('content-type:text');
+                echo($echostr);
+                exit;
+            }
         }else{
-            return false;
+            echo(false);
         }
     }
-    // 根据微信授权code登陆
+    // 教师根据微信授权code登陆
+    public function teacher_login_with_code(){
+        $url_param_t = $this->get_url_param();
+        $user_wx = get_user_wx_info($url_param_t[0],'snsapi_userinfo');
+        if(!$user_wx){
+            header('Location: https://admin.wd-jk.com/codetoany/getcode.php?auk=teacher_login');
+            return;
+        }
+        $res = $this->wxpay->teacher_login_with_code($user_wx['openid']);
+        if(!$res){
+            header('Location: https://admin.wd-jk.com/codetoany/getcode.php?auk=teacher_login');
+            return;
+        }
+        $user_info = $res[0];
+        $key_arr = array();
+        foreach($user_info as $key => $value){
+            $key = ucwords(str_replace(['-', '_'], ' ', $key));
+            $key_e = lcfirst(str_replace(' ', '', $key));
+            array_push($key_arr,$key_e);
+        }
+        $user_info_e = array_combine($key_arr,$user_info);
+        set_reids_key($url_param_t[1],json_encode($user_info_e),0,86400);
+        header('Location: http://teacher.wd-jk.com/#/');
+        return;
+    }
+    // 用户根据微信授权code登陆
     public function user_login_with_code(){
         $url_param = $this->get_url_param();
         $user_wx = get_user_wx_info($url_param[0],'snsapi_userinfo');
@@ -76,6 +105,35 @@ class WxPayControl extends CI_Controller{
         $resultArr = build_resultArr('UL001', TRUE, 0,'获取用户信息成功', $res[0] );
         http_data(200, $resultArr, $this);
     }
+    // 仅根据code获取用户数据
+    public function user_default_login(){
+        $code = $this->receive_data['code'];
+        $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx5d276a1e3d25bce5&secret=530ba6273fa62b9dcb10658f2231b6b7&code=".$code."&grant_type=authorization_code";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $output_url = curl_exec($ch);
+        curl_close($ch);
+        $res_url = json_decode($output_url, TRUE);
+        $user_wx = $res_url;
+        // $user_wx = get_user_wx_info($code,'snsapi_base');
+        if(array_key_exists("errcode",$user_wx) && $user_wx['errcode']==40163){
+            $user_wx = false;
+        }
+        if(!$user_wx){
+            $resultArr = build_resultArr('UDL001', FALSE, 0,'CODE ERR', null );
+            http_data(200, $resultArr, $this);
+        }
+        $res = $this->wxpay->user_login_with_code($user_wx['openid']);
+        if(!$res){
+            $resultArr = build_resultArr('UDL002', FALSE, 0,'cant find user', null );
+            http_data(200, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('UDL000', TRUE, 0,'ok', $res[0] );
+        http_data(200, $resultArr, $this);
+    }
     // 用户注册
     public function user_register(){
         $code = $this->receive_data['code'];
@@ -101,7 +159,7 @@ class WxPayControl extends CI_Controller{
         $resultArr = build_resultArr('UR000', TRUE, 0, "OK", $token);
         http_data(200, $resultArr, $this);
     }
-    // 根据token获取存储的用户信息
+    // 根据token获取存储的信息
     public function get_user_info_token(){
         $token = $this->receive_data['token'];
         $resultArr = build_resultArr('ULA000', TRUE, 0, "OK", RedisGet($token));
@@ -112,7 +170,10 @@ class WxPayControl extends CI_Controller{
         $url = $this->receive_data['url'];
         $APIs = $this->receive_data['sdk_arr'];
         $debug = $this->receive_data['is_debug'];
-        $res = request_jssdk($APIs,$debug,$url);
+        $beta = array_key_exists('is_beta',$this->receive_data) ? $this->receive_data['is_beta'] : false;
+        $json = array_key_exists('json',$this->receive_data) ? $this->receive_data['json'] : true;
+        $openTagList = array_key_exists('openTagList',$this->receive_data) ? $this->receive_data['openTagList'] : [];
+        $res = request_jssdk($APIs,$debug,$url,$beta,$json,$openTagList);
         $resultArr = build_resultArr('RJ000', TRUE, 0, "OK", $res);
         http_data(200, $resultArr, $this);
     }
@@ -140,9 +201,17 @@ class WxPayControl extends CI_Controller{
         $price = $this->receive_data['price'];
         $id = get_random_id(32,'ZJT');
         $prepay_info = get_prepay_id($id,$price,$openid,$description);
+        if(!$prepay_info){
+            $resultArr = build_resultArr('GPI001', FALSE, 0, "err prepay info", null);
+            http_data(200, $resultArr, $this);
+        }
         $prepay_id = $prepay_info['prepay_id'];
         $config = pay_gzh($prepay_id);
-        $resultArr = build_resultArr('GPI000', TRUE, 0, "ok", [$id,$config]);
+        if(!$config){
+            $resultArr = build_resultArr('GPI002', FALSE, 0, "err pay config", $prepay_id);
+            http_data(200, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('GPI000', TRUE, 0, "ok", [$id,$config,$prepay_id]);
         http_data(200, $resultArr, $this);
     }
     // 返回用户支付用信息
@@ -180,7 +249,17 @@ class WxPayControl extends CI_Controller{
         $resultArr = build_resultArr('GPI001', FALSE, 0, $msg, $res);
         http_data(200, $resultArr, $this);
     }
-    // 获取测试用code
+    // 未付款订单付款后更新订单
+    public function update_order_info(){
+        $res = $this->wxpay->update_order_info($this->receive_data);
+        if(!$res){
+            $resultArr = build_resultArr('UOI001', FALSE, 204,'更新订单信息错误，请联系客服', null);
+            http_data(200, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('UOI000', TRUE, 0,'更新订单信息成功', null);
+        http_data(200, $resultArr, $this);
+    }
+    // 获取code
     public function get_url_param(){
         $res = array();
         $param_str = $_SERVER["QUERY_STRING"];
@@ -193,5 +272,152 @@ class WxPayControl extends CI_Controller{
         //     $res[$tamp[0]] = $tamp[1];
         // }
         // return $res;
+    }
+    // 菜单
+    public function get_menu(){
+        $res = get_menu_now();
+        $resultArr = build_resultArr('ULA000', TRUE, 0, "OK", $res);
+        http_data(200, $resultArr, $this);
+    }
+    // 设置菜单
+    public function set_menu(){
+        $menu = [
+            [
+                'name'=>'培训中心',
+                'sub_button'=>[
+                    [
+                        'type'=>'view',
+                        'name'=>'学生页面',
+                        'url'=>'http://gzh.wd-jk.com/#/'
+                    ],
+                    [
+                        'type'=>'view',
+                        'name'=>'教师页面',
+                        'url'=>'http://teacher.wd-jk.com/#/'
+                    ]
+                ]
+            ],
+            [
+                'name'=>'产品中心',
+                'sub_button'=>[
+                    [
+                        'type'=>'media_id',
+                        'name'=>'沃顿干细胞',
+                        'media_id'=>'IxCZZG3rY_D23YqR2bgM4B4rueAoIV7WEpqmAQmykfM'
+                    ],
+                    [
+                        'type'=>'media_id',
+                        'name'=>'沃顿免疫细胞',
+                        'media_id'=>'IxCZZG3rY_D23YqR2bgM4B1PiXwMGm9hiaI2U95JqQo'
+                    ],
+                    [
+                        'type'=>'media_id',
+                        'name'=>'沃顿海外健康',
+                        'media_id'=>'IxCZZG3rY_D23YqR2bgM4PwFecabmNDeYpehUvU5htU'
+                    ]
+                ]
+            ],
+            [
+                'name'=>'关于沃顿',
+                'sub_button'=>[
+                    [
+                        'type'=>'view',
+                        'name'=>'沃顿简介',
+                        'url'=>'https://x.eqxiu.com/s/lkyKMiXh'
+                    ],
+                    [
+                        'type'=>'media_id',
+                        'name'=>'沃顿风采',
+                        'media_id'=>'IxCZZG3rY_D23YqR2bgM4O_JqDZABf5B1DgED7FTbfk'
+                    ],
+                    [
+                        'type'=>'click',
+                        'name'=>'沃顿系统',
+                        'key'=>'WDSys_info'
+                    ],
+                ]
+            ]
+        ];
+        $res = set_menu($menu);
+        $resultArr = build_resultArr('ULA000', TRUE, 0, "OK", $res);
+        http_data(200, $resultArr, $this);
+    }
+    // 获取文章列表
+    public function get_article(){
+        $appid = 'wx5d276a1e3d25bce5';
+        $secret = '530ba6273fa62b9dcb10658f2231b6b7';
+        $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$appid.'&secret='.$secret;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($ch);
+        curl_close($ch);
+        $res = json_decode($output, TRUE);
+        $access_token = $res['access_token'];
+        $url_art = 'https://api.weixin.qq.com/cgi-bin/freepublish/batchget?access_token='.$access_token;
+        $body = [
+            'offset'=>0,
+            'count'=>20,
+            "no_content"=>1
+        ];
+        $payload = json_encode($body);
+        $ch_art = curl_init();
+        curl_setopt($ch_art, CURLOPT_URL, $url_art);
+        curl_setopt($ch_art, CURLOPT_POST, TRUE);
+        curl_setopt($ch_art, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch_art, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch_art, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch_art, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch_art, CURLOPT_HTTPHEADER, array(
+
+                'Content-Type: application/json',
+
+                'Content-Length: ' . strlen($payload))
+
+        );
+        $output_url = curl_exec($ch_art);
+        curl_close($ch_art);
+        $res_url = json_decode($output_url, TRUE);
+        $resultArr = build_resultArr('GPI000', TRUE, 0,'openid', $res_url );
+        http_data(200, $resultArr, $this);
+    }
+    // 发送模板消息
+    public function send_model_msg(){
+        $open_id = $this->receive_data['openid'];
+        if(is_array($open_id)){
+            for($i=0; $i<count($open_id); $i++)
+            $tamp_data = array(
+                'openid'=>$open_id[$i],
+                'template_id'=>$this->receive_data['template_id'],
+                'aim_page'=>$this->receive_data['aim_page'],
+                'aim_miniprogram'=>$this->receive_data['aim_miniprogram'],
+                'msg_body'=>$this->receive_data['msg_body'],
+            );
+            send_model_msg($tamp_data);
+        }else{
+            send_model_msg($this->receive_data);
+        }
+    }
+    // 测试code是否合法
+    public function test_code(){
+        $code = $this->receive_data['code'];
+        // $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx5d276a1e3d25bce5&secret=530ba6273fa62b9dcb10658f2231b6b7&code=".$code."&grant_type=authorization_code";
+        // $ch = curl_init();
+        // curl_setopt($ch, CURLOPT_URL, $url);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // $output_url = curl_exec($ch);
+        // curl_close($ch);
+        // $res_url = json_decode($output_url, TRUE);
+        // if(!$res_url){
+        //     $resultArr = build_resultArr('GPI000', FALSE, 0,'openid', $user_info );
+        //     http_data(200, $resultArr, $this);
+        // }
+        $res_url = get_user_wx_info($code,'snsapi_base');
+        $resultArr = build_resultArr('GPI000', TRUE, 0,'openid', $res_url );
+        http_data(200, $resultArr, $this);
     }
 }

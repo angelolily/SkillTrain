@@ -1,5 +1,6 @@
 <?php
 $route['ci/get_info'] = 'CourseInfoControl/get_course_info';// 获取课程信息
+$route['ci/get_banner'] = 'CourseInfoControl/get_index_banner';// 获取首页轮播图
 
 $route['uo/set_f'] = 'UserOrderControl/set_enroll_form';// 存储报名表信息
 $route['uo/get_e'] = 'UserOrderControl/get_enroll_info';// 获取报名表信息
