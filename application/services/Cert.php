@@ -22,7 +22,7 @@ class Cert extends HTY_service
 	{
 		$indData['create_by'] = $by;
 		$indData['create_time'] = date('Y-m-d H:i');
-		$postname=$this->Sys_Model->table_seleRow('cert_id',"cert_tb",array('cert_name'=>$indData['cert_name'],'members_phone'=>$indData['members_phone']), $like=array());
+		$postname=$this->Sys_Model->table_seleRow('cert_id',"cert_tb",array('cert_name'=>$indData['cert_name'],'members_phone'=>$indData['members_phone']));
 		if ($postname){
 			$results = [];
 		    return $results;
@@ -42,6 +42,10 @@ class Cert extends HTY_service
                 }
                 if ($searchWhere['members_name'] != '') {
                     $where = $where . " and members_name like '%{$searchWhere['members_name']}%')";
+                }
+
+                if ($searchWhere['members_id'] != '') {
+                    $where = $where . " and members_id = '{$searchWhere['members_id']}'";
                 }
 
                 $pages = $searchWhere['pages'];
@@ -135,12 +139,12 @@ class Cert extends HTY_service
     }
 
 
-    public function readmaneypic($values)//读取目录下多图片
+    public function readmaneypic($values)//读取目录下多图片s
     {
         $res_url = [];
         $base_url='https://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'],'/index.php')+1);
         $dir_name = $values['process_data'];
-        $dir = '.'.$dir_name;
+        $dir = $base_url.'.'.$dir_name;
         if(file_exists($dir)){
             $handler = opendir($dir);
             if ($handler) {
@@ -163,9 +167,9 @@ class Cert extends HTY_service
 
 
     //选择人员下拉
-    public function membersdata()
+    public function membersdata($sign_competition_id)
     {
-        $result = $this->Sys_Model->table_seleRow('members_card,members_id,members_name,members_phone', "members", array(), $like = array());
+        $result = $this->Sys_Model->table_seleRow('sign_name,sign_card_num,sign_phone,members_id', "sign_up",['sign_competition_id'=>$sign_competition_id]);
         return $result;
     }
 

@@ -91,7 +91,7 @@ class Personal extends HTY_service
 			$new_folder = ".\public";
 			$name = date('Ymdhis') . rand(111, 999);
 			if (is_dir($new_folder) or mkdir($new_folder)) {
-				$new_file = "https://hftx.fzz.cn/public/". $name . ".{$type}";//上线后改路径
+				$new_file =  $this->config->item('localpath') ."/public/". $name . ".{$type}";//上线后改路径
 				$new_folder=$new_folder. "\\".$name . ".{$type}";
 				if (file_put_contents($new_folder, base64_decode(str_replace($result[1], '', $base64_image_content['image'])))) {
 					$this->Sys_Model->table_updateRow("base_user",array('Avatar'=>$new_file),array('Mobile'=>$by));

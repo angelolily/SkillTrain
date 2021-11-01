@@ -32,10 +32,11 @@ class Parameter extends HTY_service
 		$indData['CREATED_TIME'] = date('Y-m-d H:i');
 		$parametername=$this->Sys_Model->table_seleRow('ParameterId',"base_parameter",array('ParameterTitle'=>$indData['ParameterTitle'],'ParameterKey'=>$indData['ParameterKey']), $like=array());
 		if (count($parametername)>0){
-			$result = [];
+			$result = 0;
 			return $result;
 		}else{
 			$result = $this->Sys_Model->table_addRow("base_parameter", $indData, 1);
+
 			return $result;
 		}
 	}
@@ -87,7 +88,7 @@ class Parameter extends HTY_service
 			$del_sql = "delete from base_parameter where ".$the_uname;
 		}
 		else{
-			$restulNum=[];
+			$restulNum=0;
 			return $restulNum;
 		}
 		$restulNum = $this->Sys_Model->execute_sql($del_sql, 2);
@@ -95,7 +96,7 @@ class Parameter extends HTY_service
 	}
 
 	/**
-	 * * Notes: 修改部门数据
+	 * * Notes: 修改参数数据
 	 * User: junxiong
 	 * DateTime: 2020/1/5 10:10
 	 * @param array $values
@@ -106,8 +107,8 @@ class Parameter extends HTY_service
 		$values['UPDATED_BY'] = $by;
 		$values['UPDATED_TIME'] = date('Y-m-d H:i');
 		$parametername=$this->Sys_Model->table_seleRow('ParameterId',"base_parameter",array('ParameterTitle'=>$values['ParameterTitle'],'ParameterKey'=>$values['ParameterKey']), $like=array());
-		if ($parametername ){
-			$restulNum = [];
+		if (count($parametername)>0 ){
+			$restulNum = 0;
 			if($parametername[0]['ParameterId']==$values['ParameterId']){
 					$restulNum = $this->Sys_Model->table_updateRow('base_parameter', $values, array('ParameterId' => $values['ParameterId']));
 					return $restulNum;
@@ -129,7 +130,8 @@ class Parameter extends HTY_service
 	 */
 	public function showKey()
 	{
-		$deptArr = $this->Sys_Model->table_seleRow('ParameterKey', "base_parameter", array(), $like = array());
+		$sql="select distinct ParameterKey from base_parameter";
+		$deptArr = $this->Sys_Model->execute_sql($sql);
 		return $deptArr;
 	}
     /**

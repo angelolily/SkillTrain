@@ -61,7 +61,7 @@ class Teacher extends HTY_service
     public function get_teacherdata($pages,$rows,$wheredata){
         //Select SQL_CALC_FOUND_ROWS UserId,UserName,base_dept.DeptName,Mobile,Birthday,UserStatus,UserEmail,Sex,Remark,IsAdmin,UserRol,UserPost,base_user.CREATED_TIME from base_user,base_dept where base_user.DeptId = base_dept.DeptId
         $offset=($pages-1)*$rows;//计算偏移量
-        $sql_query="Select teacher.*,schedule.class_name,schedule.course_name from teacher where  1=1  ";
+        $sql_query="Select teacher.* from teacher where  1=1  ";
         $sql_query_where=$sql_query.$wheredata;
         if($wheredata!="")
         {
@@ -98,9 +98,8 @@ class Teacher extends HTY_service
     }
 
 //审核 修改状态
-    public function teacherstatus($values,$by)
+    public function teacherstatus($values)
     {
-        $values['updated_by'] = $by;
         $values['updated_time'] = date('Y-m-d H:i');
         $resluts=$this->Sys_Model->table_updateRow('teacher', $values, array('teacher_id' => $values['teacher_id']));
         return $resluts;

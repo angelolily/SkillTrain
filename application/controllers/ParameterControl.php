@@ -67,13 +67,17 @@ class ParameterControl extends CI_Controller
 		$this->hedVerify($keys);//前置验证
 //		$this->hedVerify();//前置验证
 		$resultNum = $this->parameter->addData($this->dataArr, $this->userArr['Mobile']);
-		if (count($resultNum )> 0) {
+		if ($resultNum> 0) {
 			$resulArr = build_resulArr('D000', true, '插入成功', []);
 			http_data(200, $resulArr, $this);
-		} else {
-			$resulArr = build_resulArr('D002', false, '插入失败', []);
+		} else if($resultNum= -3) {
+			$resulArr = build_resulArr('D002', false, '已有重复参数，请勿重复插入', []);
 			http_data(200, $resulArr, $this);
 		}
+		else{
+            $resulArr = build_resulArr('D002', false, '插入失败', []);
+            http_data(200, $resulArr, $this);
+        }
 
 
 	}
@@ -109,7 +113,7 @@ class ParameterControl extends CI_Controller
 		$this->hedVerify($keys);//前置验证
 //		$this->hedVerify();//前置验证
 		$result = $this->parameter->delParameter($this->dataArr);
-		if (count($result) > 0) {
+		if ($result > 0) {
 			$resulArr = build_resulArr('D000', true, '删除成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
@@ -125,7 +129,7 @@ class ParameterControl extends CI_Controller
 		$this->hedVerify($keys);//前置验证
 //		$this->hedVerify();//前置验证
 		$result = $this->parameter->modifyParameter($this->dataArr, $this->userArr['Mobile']);
-		if (count($result) > 0) {
+		if ($result > 0) {
 			$resulArr = build_resulArr('D000', true, '修改成功', []);
 			http_data(200, $resulArr, $this);
 		} else {

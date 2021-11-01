@@ -24,7 +24,7 @@ class Classman extends HTY_service
         $indData['a']['create_by'] = $by;
         $indData['a']['create_time'] = date('Y-m-d H:i');
         $indData['a']['class_id'] = uniqid();//生成唯一ID
-        $postname = $this->Sys_Model->table_seleRow('class_id', "class_group", array('class_name' => $indData['a']['class_name']), $like = array());
+        $postname = $this->Sys_Model->table_seleRow('class_id', "class_group", array('class_name' => $indData['a']['class_name']));//班级名称重复判断
         if ($postname) {
             $result = [];
             return $result;
@@ -71,80 +71,137 @@ class Classman extends HTY_service
         }
     }
 
-    //选择人员加入班级排课的下拉
-    public function membersdata($indData)
+
+
+    //选择人员加入班级排课
+    public function members_data($indData)
     {
+        $pages = $indData['pages'];
+        $rows = $indData['rows'];
+        $offset=($pages-1)*$rows;//计算偏移量
+
+        //新增班级与修改班级使用同一接口，所以需要判断是新增调用还是修改调用
+        //ID：true 新增获取，false，修改获取
         if($indData['ID']=="true"){
-        $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
-        if($result){
-            $sql = "" . $result[0]['members_id'];
-            foreach ($result as $item) {
-                $sql = $sql . "," . $item['members_id'];
-            }
-            $pages = $indData['pages'];
-            $rows = $indData['rows'];
-            $offset=($pages-1)*$rows;//计算偏移量
-            $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
-            $results['data'] = $this->Sys_Model->execute_sql($sql1);
-            $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
-            $resul = $this->Sys_Model->execute_sql($sql2);
-            $results['total']=count($resul);
-            return $results;
-        }else{
-            return $result;
-        }
-    }else{
-            $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名", "sign_class" => "1"), $like = array());
-            if($result) {
-                $sql = "" . $result[0]['members_id'];
-                foreach ($result as $item) {
-                    $sql = $sql . "," . $item['members_id'];
-                }
-                $pages = $indData['pages'];
-                $rows = $indData['rows'];
-                $offset = ($pages - 1) * $rows;//计算偏移量
-                $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit " . $offset . "," . $rows;
-                $results['data'] = $this->Sys_Model->execute_sql($sql1);
-                $result1 = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
 
-                $sqll = "" . $result1[0]['members_id'];
-                foreach ($result1 as $item) {
-                    $sqll= $sqll . "," . $item['members_id'];
-                }
-                $pages = $indData['pages'];
-                $rows = $indData['rows'];
-                $offset = ($pages - 1) * $rows;//计算偏移量
-                $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sqll . ")  limit ".$offset.",".$rows;
-                $results['alldata'] = $this->Sys_Model->execute_sql($sql2);
-                $sql3 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sqll . ") ";
-                $resul = $this->Sys_Model->execute_sql($sql3);
-                $results['total']=count($resul);
-                return  $results;
-            }else{
-                $result1 = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
-                if($result1){
-                    $sql = "" . $result1[0]['members_id'];
-                    foreach ($result1 as $item) {
-                        $sql = $sql . "," . $item['members_id'];
-                    }
-                    $pages = $indData['pages'];
-                    $rows = $indData['rows'];
-                    $offset = ($pages - 1) * $rows;//计算偏移量
-                    $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
-                    $results['alldata'] = $this->Sys_Model->execute_sql($sql2);
-                    $sql3 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
-                    $resul = $this->Sys_Model->execute_sql($sql3);
-                    $results['total']=count($resul);
-                    $results['data']=[];
-                    return $results;
-                }
-                else{
-                    return $result1;
-                }
-
+            $arrTotal=$this->Sys_Model->table_seleRow('sign_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_class !=" => "1"));
+            if(count($arrTotal)>0){
+                $result = $this->Sys_Model->table_seleRow_limit('members_id,sign_name as members_name,sign_phone as members_phone,members_openid', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_class !=" => "1"),[],$rows,$offset);
+                $results['total']=count($arrTotal);
+                $results['data']=$result;
             }
+            else{
+                $results['total']=0;
+                $results['data']=[];
+            }
+
+
         }
+        else{
+
+
+            $arrTotal=$this->Sys_Model->table_seleRow('sign_id', "sign_up", array('sign_competition_id' => $indData['course_id']));
+            if(count($arrTotal)>0){
+                //获取报名表中全部报该课程的学员
+                $resultAll = $this->Sys_Model->table_seleRow_limit('members_id,sign_name as members_name,sign_phone as members_phone,members_openid', "sign_up", array('sign_competition_id' => $indData['course_id']),[],$rows,$offset);
+                //获取已经排课的学员
+                $getsql="select distinct members_id,members_name,members_phone,members_openid from schedule where course_id='".$indData['course_id']."' limit ".$offset.",".$rows;
+                $resultData = $this->Sys_Model->execute_sql($getsql);;
+                $results['total']=count($arrTotal);
+                $results['data']=$resultData;
+                $results['alldata']=$resultAll;
+                
+            }
+            else{
+                $results['total']=0;
+                $results['data']=[];
+                $results['alldata']=[];
+            }
+
+
+        }
+
+       
+
+        return $results;
+
     }
+
+
+    // //选择人员加入班级排课的下拉
+    // public function membersdata($indData)
+    // {
+    //     if($indData['ID']=="true"){
+    //     $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
+    //     if($result){
+    //         $sql = "" . $result[0]['members_id'];
+    //         foreach ($result as $item) {
+    //             $sql = $sql . "," . $item['members_id'];
+    //         }
+    //         $pages = $indData['pages'];
+    //         $rows = $indData['rows'];
+    //         $offset=($pages-1)*$rows;//计算偏移量
+    //         $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
+    //         $results['data'] = $this->Sys_Model->execute_sql($sql1);
+    //         $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
+    //         $resul = $this->Sys_Model->execute_sql($sql2);
+    //         $results['total']=count($resul);
+    //         return $results;
+    //     }else{
+    //         return $result;
+    //     }
+    // }else{
+    //         $result = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名", "sign_class" => "1"), $like = array());
+    //         if($result) {
+    //             $sql = "" . $result[0]['members_id'];
+    //             foreach ($result as $item) {
+    //                 $sql = $sql . "," . $item['members_id'];
+    //             }
+    //             $pages = $indData['pages'];
+    //             $rows = $indData['rows'];
+    //             $offset = ($pages - 1) * $rows;//计算偏移量
+    //             $sql1 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit " . $offset . "," . $rows;
+    //             $results['data'] = $this->Sys_Model->execute_sql($sql1);
+    //             $result1 = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
+
+    //             $sqll = "" . $result1[0]['members_id'];
+    //             foreach ($result1 as $item) {
+    //                 $sqll= $sqll . "," . $item['members_id'];
+    //             }
+    //             $pages = $indData['pages'];
+    //             $rows = $indData['rows'];
+    //             $offset = ($pages - 1) * $rows;//计算偏移量
+    //             $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sqll . ")  limit ".$offset.",".$rows;
+    //             $results['alldata'] = $this->Sys_Model->execute_sql($sql2);
+    //             $sql3 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sqll . ") ";
+    //             $resul = $this->Sys_Model->execute_sql($sql3);
+    //             $results['total']=count($resul);
+    //             return  $results;
+    //         }else{
+    //             $result1 = $this->Sys_Model->table_seleRow('sign_id,members_id', "sign_up", array('sign_competition_id' => $indData['course_id'], "sign_statue" => "成功报名"), $like = array());
+    //             if($result1){
+    //                 $sql = "" . $result1[0]['members_id'];
+    //                 foreach ($result1 as $item) {
+    //                     $sql = $sql . "," . $item['members_id'];
+    //                 }
+    //                 $pages = $indData['pages'];
+    //                 $rows = $indData['rows'];
+    //                 $offset = ($pages - 1) * $rows;//计算偏移量
+    //                 $sql2 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ")  limit ".$offset.",".$rows;
+    //                 $results['alldata'] = $this->Sys_Model->execute_sql($sql2);
+    //                 $sql3 = "select members_id,members_nickname,members_openid,members_name,members_phone from members where members_id in (" . $sql . ") ";
+    //                 $resul = $this->Sys_Model->execute_sql($sql3);
+    //                 $results['total']=count($resul);
+    //                 $results['data']=[];
+    //                 return $results;
+    //             }
+    //             else{
+    //                 return $result1;
+    //             }
+
+    //         }
+    //     }
+    // }
 
     //获取班级表
     public function getclass($searchWhere = []) //查询到赛事表
@@ -204,7 +261,7 @@ class Classman extends HTY_service
     public function get_scheduledata($wheredata)
     {
         //Select SQL_CALC_FOUND_ROWS UserId,UserName,base_dept.DeptName,Mobile,Birthday,UserStatus,UserEmail,Sex,Remark,IsAdmin,UserRol,UserPost,base_user.CREATED_TIME from base_user,base_dept where base_user.DeptId = base_dept.DeptId
-        $sql_query = "Select DISTINCT class_id,course_name,class_num,school_time,home_time,class_romm,teacher,rate,members_name,members_id,members_openid,members_phone from schedule  where  1=1  ";
+        $sql_query = "Select DISTINCT class_id,course_name,class_num,school_time,home_time,class_romm,teacher_id,teacher_name,rate,members_name,members_id,members_openid,members_phone from schedule  where  1=1  ";
         $sql_query_where = $sql_query . $wheredata;
         if ($wheredata != "") {
             $sql_query = $sql_query_where;

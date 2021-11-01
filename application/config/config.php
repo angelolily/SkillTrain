@@ -537,4 +537,4 @@ $config['serverZipFilePata']='https://hanfu.fzz.cn/public/tempPhotoSave/';
 /*
  * 配置在服务器中所有图片的路径
 */
-$config['localpath']='https://admin.wd-jk.com';
+$config['localpath']='https://admin.wd-jk.com/SkillTrain';

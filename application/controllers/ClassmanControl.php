@@ -72,7 +72,7 @@ class ClassmanControl extends CI_Controller
     public function showRow()
     {
         $this->hedVerify("course_id");//前置验证
-        $result = $this->classman->membersdata($this->dataArr);
+        $result = $this->classman->members_data($this->dataArr);
         if (count($result) > 0) {
             $resulArr = build_resulArr('D000', true, '显示成功', json_encode($result));
             http_data(200, $resulArr, $this);
@@ -81,6 +81,13 @@ class ClassmanControl extends CI_Controller
             http_data(200, $resulArr, $this);
         }
     }
+
+
+
+
+
+
+	
 //获取班级表
 	public function getclassRow()
 	{

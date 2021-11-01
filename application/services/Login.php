@@ -66,8 +66,16 @@ class Login extends HTY_service
 	{
 	        $rk=array_key_exists("rk",$_POST)?$_POST['rk']:"";
 			$resulArr=[];
-			$userDataArr = $this->Sys_Model->table_seleRow('UserStatus,UserName,Mobile,UserPassword,UserRole,Sex,IsAdmin,UserDept,UserPost,Avatar',
-				'base_user', array('Mobile' => $indData['Mobile']),[],[],"",[],$rk);
+			$userDataArr = $this->Sys_Model->table_seleRow(
+				'UserStatus,UserName,Mobile,UserPassword,UserRole,Sex,IsAdmin,UserDept,UserPost,Avatar',
+				'base_user', 
+				array('Mobile' => $indData['Mobile']),
+				[],
+				[],
+				"",
+				[],
+				$rk
+			);
 			if (count($userDataArr) > 0) {
 				if ($userDataArr[0]['UserStatus'] == '1') {
 					$pwd = $this->encryption->decrypt($userDataArr[0]['UserPassword']);

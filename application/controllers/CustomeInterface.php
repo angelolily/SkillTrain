@@ -49,7 +49,7 @@ class CustomeInterface extends CI_Controller
 
             }
             $pptfiles=join(',',$pptfiles);
-            $resultvalue['Advert_image']="https://admin.wd-jk.com/public/advert/".$pptfiles;
+            $resultvalue['Advert_image']=$this->config->item('localpath')."/public/advert/".$pptfiles;
             http_data(200, $resultvalue, $this);
         }
     }
@@ -101,7 +101,7 @@ class CustomeInterface extends CI_Controller
             $info=bykey_reitem($info, 'signature');
             $info['created_time']=date("Y-m-d H:i");
             $resultNum = $this->wproductstore->addGeneral("advert", $info);
-            if (count($resultNum )> 0) {
+            if ($resultNum> 0) {
                 $resulArr = build_resulArr('AD000', true, '插入成功', []);
                 http_data(200, $resulArr, $this);
             } else {
@@ -140,7 +140,7 @@ class CustomeInterface extends CI_Controller
             $info['updated_time']=date("Y-m-d H:i");
             $where['advertId']=$info['advertId'];
             $resultNum = $this->wproductstore->updateGeneral("advert",$info,$where);
-            if (count($resultNum )> 0) {
+            if ($resultNum> 0) {
                 $resulArr = build_resulArr('ADU00', true, '修改成功', []);
                 http_data(200, $resulArr, $this);
             } else {
@@ -175,7 +175,7 @@ class CustomeInterface extends CI_Controller
             $info=bykey_reitem($info, 'signature');
 
             $resultNum = $this->wproductstore->delGeneral("advert", $info);
-            if (count($resultNum )> 0) {
+            if ($resultNum>0) {
                 $resulArr = build_resulArr('ADU00', true, '删除成功', []);
                 http_data(200, $resulArr, $this);
             } else {

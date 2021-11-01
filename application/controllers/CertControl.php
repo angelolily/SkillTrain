@@ -29,7 +29,7 @@ class CertControl extends CI_Controller
 					$errorKey=existsArrayKey($keys,$this->OldDataArr);
 					if($errorKey=="")
 					{
-						$this->userArr['Mobile'] = $this->OldDataArr['phone'];
+						$this->userArr['Mobile'] = array_key_exists("phone",$this->OldDataArr)?$this->OldDataArr['phone']:"";
 					}
 					else
 					{
@@ -74,7 +74,7 @@ class CertControl extends CI_Controller
 //获取
 	public function getRow()
 	{
-        $keys="rows,pages,cert_name,members_name";
+        $keys="rows,pages,cert_name,members_name,members_id";
         $this->hedVerify($keys);
         $result = $this->cert->getcert($this->dataArr);
         if (count($result) >= 0) {
@@ -162,15 +162,15 @@ class CertControl extends CI_Controller
     //人员下拉
     public function membersdata()
     {
-        $keys="";
+        $keys="course_id";
         $this->hedVerify($keys);
 //		$this->hedVerify();
-        $result = $this->cert->membersdata();
+        $result = $this->cert->membersdata($this->dataArr['course_id']);
         if ($result) {
             $resulArr = build_resulArr('D000', true, '下拉成功', $result);
             http_data(200, $resulArr, $this);
         } else {
-            $resulArr = build_resulArr('D003', false, '下拉失败', []);
+            $resulArr = build_resulArr('D003', true, '下拉无数据', []);
             http_data(200, $resulArr, $this);
         }
     }

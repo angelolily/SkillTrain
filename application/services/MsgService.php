@@ -28,13 +28,13 @@ class MsgService extends HTY_service
                 $where['class_id']=$searchWhere['class_id'];
             }
             if ($searchWhere['members_name'] != '') {//会员名称名称
-                $where['$where']=$searchWhere['members_name'];
+                $where['members_name']=$searchWhere['members_name'];
             }
 
             $pages = $searchWhere['pages'];
             $rows = $searchWhere['rows'];
             $offset = ($pages - 1) * $rows;//计算偏移量
-            $arr_total=$this->Sys_Model->table_seleRow_limit("*","message",$where,$like);
+            $arr_total=$this->Sys_Model->table_seleRow("*","message",$where,$like);
 
             if(count($arr_total)>0){
                 $deptTmpArr['total'] = count($arr_total);//获取总行数

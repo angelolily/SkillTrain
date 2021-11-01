@@ -60,7 +60,7 @@ class CoursewareControl extends CI_Controller
 		$keys="course_name,course_num,course_id";
 		$this->hedVerify($keys);
 		$resultNum = $this->courseware->addData($this->dataArr, $this->userArr['Mobile']);
-		if (count($resultNum )> 0) {
+		if ($resultNum > 0) {
 			$resulArr = build_resulArr('D000', true, '插入成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
@@ -116,7 +116,7 @@ class CoursewareControl extends CI_Controller
 		$this->hedVerify($keys);
 //		$this->hedVerify();
 		$result = $this->courseware->delcourseware($this->dataArr);
-		if (count($result) > 0) {
+		if ($result > 0) {
 			$resulArr = build_resulArr('D000', true, '删除成功', []);
 			http_data(200, $resulArr, $this);
 		} else {
@@ -131,7 +131,7 @@ class CoursewareControl extends CI_Controller
         $this->hedVerify($keys);
 //		$this->hedVerify();
         $result = $this->courseware->modifycourseware($this->dataArr, $this->userArr['Mobile']);
-        if (count($result) > 0) {
+        if ($result > 0) {
             $resulArr = build_resulArr('D000', true, '修改成功', []);
             http_data(200, $resulArr, $this);
         } else {

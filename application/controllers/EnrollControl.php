@@ -59,10 +59,8 @@ class EnrollControl extends CI_Controller{
         $dir_name = $this->input->post('dir');
         if($type === 'id_photo'){
             $key_name = 'id_';
-        }else if($type === 'id_card_f'){
-            $key_name = 'card_f_';
-        }else if($type === 'id_card_b'){
-            $key_name = 'card_b_';
+        }else if($type === 'id_card'){
+            $key_name = 'card_';
         }else if($type === 'education'){
             $key_name = 'edu_';
         }else{

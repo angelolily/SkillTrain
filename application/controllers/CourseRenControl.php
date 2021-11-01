@@ -57,6 +57,16 @@ class CourseRenControl extends CI_Controller{
             http_data(200, $resultArr, $this);
         }
     }
+    public function getTeacherSchedule(){
+        $result = $this->courseren->getTeacherSchedule($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('gs000', true, 0,'获取成功',json_encode($result) );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('gs002', false, 0,'获取失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
     /**
      * @OA\Post(
      *    tags={"hyr"},
@@ -102,6 +112,26 @@ class CourseRenControl extends CI_Controller{
             http_data(200, $resultArr, $this);
         } else {
             $resultArr = build_resultArr('gc002', false, 0,'获取失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
+    public function getNote(){
+        $result = $this->courseren->getNote($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('gn000', true, 0,'获取成功',json_encode($result) );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('gn002', false, 0,'获取失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
+    public function getOrder(){
+        $result = $this->courseren->getOrder($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('go000', true, 0,'获取成功',json_encode($result) );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('go002', false, 0,'获取失败', []);
             http_data(200, $resultArr, $this);
         }
     }
@@ -201,6 +231,26 @@ class CourseRenControl extends CI_Controller{
             http_data(200, $resultArr, $this);
         }
     }
+    public function updateInfo(){
+        $result = $this->courseren->updateInfo($this->receive_data);
+        if (count($result) > 0) {
+            $resultArr = build_resultArr('ui000', true, 0,'获取成功',[] );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('ui002', false, 0,'获取失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
+    public function send(){
+        $result = $this->courseren->send($this->receive_data);
+        if ($result > 0) {
+            $resultArr = build_resultArr('send000', true, 0,'发送成功',[] );
+            http_data(200, $resultArr, $this);
+        } else {
+            $resultArr = build_resultArr('send002', false, 0,'发送失败', []);
+            http_data(200, $resultArr, $this);
+        }
+    }
 
     /**
      * @OA\Post(
@@ -242,11 +292,15 @@ class CourseRenControl extends CI_Controller{
      **/
     public function sign(){
         $result = $this->courseren->sign($this->receive_data);
-        if (count($result) > 0) {
+        if ($result==0) {
             $resultArr = build_resultArr('sg000', true, 0,'签到成功',[] );
             http_data(200, $resultArr, $this);
-        } else {
-            $resultArr = build_resultArr('sg002', false, 0,'签到失败', []);
+        } else if($result==1) {
+            $resultArr = build_resultArr('sg001', false, 0,'签到失败,您已经签到过了', []);
+            http_data(200, $resultArr, $this);
+        }
+        else {
+            $resultArr = build_resultArr('sg002', false, 0,'签到失败,未查询到您的排课信息', []);
             http_data(200, $resultArr, $this);
         }
     }

@@ -91,7 +91,6 @@ class TeacherControl extends CI_Controller
 	{
 		$keys="teacher_id,teacher_status";
 		$this->hedVerify($keys);
-//		$this->hedVerify();
 		$result = $this->teacher->teacherstatus($this->dataArr);
 		if ($result) {
 			$resulArr = build_resulArr('D000', true, '修改状态成功', []);
