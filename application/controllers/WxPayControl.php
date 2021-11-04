@@ -259,19 +259,18 @@ class WxPayControl extends CI_Controller{
         $resultArr = build_resultArr('UOI000', TRUE, 0,'更新订单信息成功', null);
         http_data(200, $resultArr, $this);
     }
-    // 获取code
-    public function get_url_param(){
-        $res = array();
-        $param_str = $_SERVER["QUERY_STRING"];
-        $param_arr = explode("&",$param_str);
-        $code_arr = explode("=",$param_arr[0]);
-        $token_arr = explode("=",$param_arr[1]);
-        return [$code_arr[1],$token_arr[1]];
-        // for($i = 0; $i < count($param_arr); $i++){
-        //     $tamp = explode("=",$param_arr[$i]);
-        //     $res[$tamp[0]] = $tamp[1];
-        // }
-        // return $res;
+    //处理微信支付回调
+    public function notify(){
+        get_notify();
+//        $test_xml  = file_get_contents("php://input");
+//        $json_xml = json_encode(simplexml_load_string($test_xml, 'SimpleXMLElement', LIBXML_NOCDATA));
+//        $result = json_decode($json_xml, true);
+//        if($result){
+//            $out_trade_no = $result['out_trade_no'];
+//            if($result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS'){
+//                echo 1;
+//            }
+//        }
     }
     // 菜单
     public function get_menu(){
@@ -399,6 +398,20 @@ class WxPayControl extends CI_Controller{
         }else{
             send_model_msg($this->receive_data);
         }
+    }
+    // 获取code
+    public function get_url_param(){
+        $res = array();
+        $param_str = $_SERVER["QUERY_STRING"];
+        $param_arr = explode("&",$param_str);
+        $code_arr = explode("=",$param_arr[0]);
+        $token_arr = explode("=",$param_arr[1]);
+        return [$code_arr[1],$token_arr[1]];
+        // for($i = 0; $i < count($param_arr); $i++){
+        //     $tamp = explode("=",$param_arr[$i]);
+        //     $res[$tamp[0]] = $tamp[1];
+        // }
+        // return $res;
     }
     // 测试code是否合法
     public function test_code(){

@@ -14,7 +14,7 @@ $config = [
     'cert_path'          => 'C:\phpstudy_pro\WWW\SkillTrain\public\cert\apiclient_cert.pem',
     'key_path'           => 'C:\phpstudy_pro\WWW\SkillTrain\public\cert\apiclient_key.pem',
 
-    'notify_url'         => 'https://ywwuyi.top/Hanfu-world/public/wxpayv3/notify.php',
+    'notify_url'         => 'https://admin.wd-jk.com/SkillTrain/index.php/WxPayControl/notify',
 
     'sandbox'            => false
 ];
@@ -34,6 +34,17 @@ function check_serve(){
     $app = Factory::officialAccount($config);
     $response = $app->server->serve();
     $response->send();exit;
+}
+// 处理微信支付回调
+function get_notify(){
+    $pay = Factory::payment($GLOBALS['config']);
+    $response = $pay->handlePaidNotify(function ($message, $fail) {
+        // 你的逻辑
+        return true;
+        // 或者错误消息
+        $fail('Order not exists.');
+    });
+    $response->send();
 }
 // 获取统一订单id
 function get_prepay_id($id,$price,$openid,$description){

@@ -13,4 +13,9 @@ class CourseInfo extends HTY_service{
         $field = "advertImagePath as banner_url,advertSkipPath as banner_page";
         return $this->Sys_Model->table_seleRow($field,'advert',$where);
     }
+    public function get_sign_model($data){
+        $where = array("sign_relevancy_id"=>$data['moedl_id']);
+        $field = "sign_control_column as column,sign_control_title as title,sign_control_tip as tip,sign_index_style as style,sign_is_require as require,";
+        return $this->Sys_Model->table_seleRow($field,'sign_index',$where);
+    }
 }

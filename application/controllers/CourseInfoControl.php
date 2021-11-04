@@ -137,4 +137,52 @@ class CourseInfoControl extends CI_Controller{
         $resultArr = build_resultArr('GIB000', TRUE, 0,'获取课程信息成功', $res );
         http_data(200, $resultArr, $this);
     }
+
+    /**
+     * @OA\Post(
+     *    tags={"yjl"},
+     *    path="ci/get_model",
+     *    summary="获取报名模板内容",
+     *	@OA\RequestBody(
+     *		@OA\MediaType(
+     *            mediaType="application/json",
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="moedl_id",
+     *                    type="string/int",
+     *                    description="报名模板id"
+     *                ),
+     *                example={
+     *                    "moedl_id":"1"
+     *                }
+     *            )
+     *        )
+     *    ),
+     *	@OA\Response(
+     *        response=200,
+     *        description="正确返回",
+     *		@OA\JsonContent(
+     *			@OA\Schema(
+     *				@OA\Property(
+     *                    property="response_key",
+     *                    type="response_type",
+     *                    description="参数说明"
+     *                )
+     *            ),
+     *            example={
+     *                "example_response_key":"example_response_val"
+     *            }
+     *        )
+     *    ),
+     * )
+     **/
+    public function get_sign_model(){
+        $res = $this->courseinfo->get_sign_model($this->receive_data);
+        if(!$res){
+            $resultArr = build_resultArr('GSM001', FALSE, 204,'获取模板信息错误', null );
+            http_data(204, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('GSM000', TRUE, 0,'获取模板信息成功', $res );
+        http_data(200, $resultArr, $this);
+    }
 }
