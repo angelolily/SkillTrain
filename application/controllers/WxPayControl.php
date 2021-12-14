@@ -199,7 +199,7 @@ class WxPayControl extends CI_Controller{
         $description = $this->receive_data['description'];
         $openid = $this->receive_data['openid'];
         $price = $this->receive_data['price'];
-        $id = get_random_id(32,'ZJT');
+        $id = $this->receive_data['order_mic_id'];
         $prepay_info = get_prepay_id($id,$price,$openid,$description);
         if(!$prepay_info){
             $resultArr = build_resultArr('GPI001', FALSE, 0, "err prepay info", null);
@@ -261,16 +261,19 @@ class WxPayControl extends CI_Controller{
     }
     //处理微信支付回调
     public function notify(){
+        // 回送微信成功响应
         get_notify();
-//        $test_xml  = file_get_contents("php://input");
-//        $json_xml = json_encode(simplexml_load_string($test_xml, 'SimpleXMLElement', LIBXML_NOCDATA));
-//        $result = json_decode($json_xml, true);
-//        if($result){
-//            $out_trade_no = $result['out_trade_no'];
-//            if($result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS'){
-//                echo 1;
-//            }
-//        }
+        // 重新获取数据进行处理
+        $test_xml  = file_get_contents("php://input");
+        $json_xml = json_encode(simplexml_load_string($test_xml, 'SimpleXMLElement', LIBXML_NOCDATA));
+        $result = json_decode($json_xml, true);
+        if($result){
+            if($result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS'){
+                $order_mic_id = $result['out_trade_no'];
+                $openid = $result['openid'];
+                $this->wxpay->update_order_info_notify($openid,$order_mic_id);
+            }
+        }
     }
     // 菜单
     public function get_menu(){

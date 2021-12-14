@@ -89,10 +89,43 @@ class WxPay extends HTY_service{
             $this->db->trans_commit();
         }
         return $returnInfo;
-//        if($returnInfo){
-//            return $sign_id;
-//        }else{
-//            return $returnInfo;
-//        }
+    }
+    // 根据微信回调更新订单信息
+    public function update_order_info_notify($openid,$order_mic_id){
+        $returnInfo = true;
+        $this->db->trans_begin();
+        // 开始事务
+        // 更新订单为付款成功
+        $where_order = array(
+            'members_openid'=>$openid,
+            'order_mic_id'=>$order_mic_id
+        );
+        $data_order = array(
+            'order_statue'=>'付款成功',
+            'updated_by'=>"ZPTSys",
+            'updated_time'=>date('Y-m-d H:i:s')
+        );
+        $this->Sys_Model->table_updateRow('order', $data_order, $where_order);
+        // 获取订单信息
+        $order_info = $this->Sys_Model->table_seleRow("*",'order',$where_order);
+        // 更新报名信息
+        $where_enroll = array(
+            'sign_id'=>$order_info[0]['order_sign_id']
+        );
+        $data_enroll = array(
+            'sign_statue'=>'成功报名',
+            'sign_updated_by'=>"ZPTSys",
+            'sign_updated_time'=>date('Y-m-d H:i:s')
+        );
+        $this->Sys_Model->table_updateRow('sign_up', $data_enroll, $where_enroll);
+        // 结束事务
+        $row=$this->db->affected_rows();
+        if (($this->db->trans_status() === FALSE) && $row<=0){
+            $this->db->trans_rollback();
+            $returnInfo = false;
+        }else{
+            $this->db->trans_commit();
+        }
+        return $returnInfo;
     }
 }
