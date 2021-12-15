@@ -155,7 +155,6 @@ class CustomeInterface extends CI_Controller
 
     }
 
-<<<<<<< HEAD
     //导出Excel
     public function ControlExcel()
     {
@@ -173,8 +172,6 @@ class CustomeInterface extends CI_Controller
 
     }
 
-=======
->>>>>>> 62b93cfcc187df8541e5e5e57709818b36c80848
 
     /**
      * 12、删除广告
