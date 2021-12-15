@@ -3,6 +3,8 @@ $route['ci/get_info'] = 'CourseInfoControl/get_course_info';// 获取课程信�
 $route['ci/get_banner'] = 'CourseInfoControl/get_index_banner';// 获取首页轮播图
 $route['ci/get_model'] = 'CourseInfoControl/get_sign_model';// 获取报名模板内容
 
+$route['uo/set_f_t'] = 'UserOrderControl/set_enroll_form_temp';// 存储报名表信息(仅报名
+
 $route['uo/set_f'] = 'UserOrderControl/set_enroll_form';// 存储报名表信息
 $route['uo/get_e'] = 'UserOrderControl/get_enroll_info';// 获取报名表信息
 

@@ -41,4 +41,7 @@ class UserOrder extends HTY_service{
         $where = array('order_autoid'=>$data);
         return $this->Sys_Model->table_seleRow($field,'order',$where);
     }
+    public function set_enroll_form_temp($data){
+        return $this->Sys_Model->table_addRow('sign_up',$data['enroll_form']);
+    }
 }

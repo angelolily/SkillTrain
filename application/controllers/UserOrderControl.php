@@ -55,4 +55,20 @@ class UserOrderControl  extends CI_Controller{
         $resultArr = build_resultArr('GEI000', TRUE, 0,'获取报名信息成功', [$res[0],$res_order[0],$img_arr] );
         http_data(200, $resultArr, $this);
     }
+    // 生成报名信息(仅报名
+    public function set_enroll_form_temp(){
+        $this->receive_data['enroll_form']['sign_created_time'] = date('Y-m-d H:i:s');
+        $this->receive_data['enroll_form']['sign_created_by'] = "ZPTSys";
+        $this->receive_data['order_form']['order_customer_name'] = $this->receive_data['enroll_form']['sign_name'];
+        $this->receive_data['order_form']['order_datetime'] = date('Y-m-d H:i:s');
+        $this->receive_data['order_form']['created_time'] = date('Y-m-d H:i:s');
+        $this->receive_data['order_form']['created_by'] = "ZPTSys";
+        $res = $this->userorder->set_enroll_form_temp($this->receive_data);
+        if(!$res){
+            $resultArr = build_resultArr('SEF001', FALSE, 204,'报名信息存储错误', null );
+            http_data(204, $resultArr, $this);
+        }
+        $resultArr = build_resultArr('SEF000', TRUE, 0,'报名信息存储成功', null );
+        http_data(200, $resultArr, $this);
+    }
 }
