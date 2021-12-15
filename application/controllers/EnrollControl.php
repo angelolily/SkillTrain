@@ -271,7 +271,11 @@ class EnrollControl extends CI_Controller{
         $index = $this->receive_data['index_obj'];
         for($i = 0; $i < count($index); $i++){
             $index[$i]['sign_relevancy_id'] = $res_add_model;
+<<<<<<< HEAD
             $index[$i]['sign_index_created_by'] = 'HFTX_Sys';
+=======
+            $index[$i]['sign_index_created_by'] = 'ZPT_Sys';
+>>>>>>> 62b93cfcc187df8541e5e5e57709818b36c80848
             $index[$i]['sign_index_created_time'] = date('Y-m-d H:i:s');
             $res = $this->enroll->add_index_option($index[$i]);
             if(!$res){
