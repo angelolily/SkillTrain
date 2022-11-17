@@ -14,6 +14,7 @@ class CustomeInterface extends CI_Controller
         parent::__construct();
         $this->load->service('wProductStore');
         $this->load->helper('tool');
+        $this->load->model('Wechat_Tool_Model');
     }
 
 
@@ -210,9 +211,67 @@ class CustomeInterface extends CI_Controller
 
 
 
+    /**
+     * 14、回应服务器消息
+     * User:
+     *
+     */
+
+    public function putService(){
+
+
+        $this->Wechat_Tool_Model->send_Report_Statue();
 
 
 
+    }
+
+
+    /**
+     * 15、获取微信二维码
+     * User:
+     *
+     */
+
+    public function getClassWechatQR(){
+
+
+
+        $agentinfo = file_get_contents('php://input');
+        $info = json_decode($agentinfo,true);
+        if(count($info)>0)
+        {
+            $info=bykey_reitem($info, 'phone');
+            $info=bykey_reitem($info, 'timestamp');
+            $info=bykey_reitem($info, 'signature');
+            $fileName=$info['course_id']."jpg";
+            $qrSavePath="./public/qrcode";
+
+            if (file_exists($qrSavePath.$fileName)){
+                $resulArr = build_resulArr('GQR00', true, '获取成功', ["fileName"=>$fileName,"qrSavePath"=>$qrSavePath]);
+                http_data(200, $resulArr, $this);
+            }else{
+                $resultNum = $this->wproductstore->build_qrcode($info['course_id'],$info['qrType'],$qrSavePath);
+                if ($resultNum==1) {
+                    $resulArr = build_resulArr('GQR00', true, '获取成功', ["fileName"=>$fileName,"qrSavePath"=>$qrSavePath]);
+                    http_data(200, $resulArr, $this);
+                } else {
+                    $resulArr = build_resulArr('GDR02', false, '获取失败', []);
+                    http_data(200, $resulArr, $this);
+                }
+            }
+
+
+        }
+        else{
+            $resulArr = build_resulArr('GDQ01', false, '参数接收失败', []);
+            http_data(200, $resulArr, $this);
+        }
+
+
+
+
+    }
 
 
 

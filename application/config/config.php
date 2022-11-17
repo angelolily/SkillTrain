@@ -538,3 +538,9 @@ $config['serverZipFilePata']='https://hanfu.fzz.cn/public/tempPhotoSave/';
  * 配置在服务器中所有图片的路径
 */
 $config['localpath']='https://admin.wd-jk.com/SkillTrain';
+
+
+/*
+ * 配置公众号模版消息显示路径
+*/
+$config['gzhMsgpath']='http://gzh.wd-jk.com/#/course/enroll/new/';

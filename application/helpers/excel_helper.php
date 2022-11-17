@@ -1,19 +1,10 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 require_once 'vendor/autoload.php';
 
 //PHP导出Excel
-/**
- * 数据导出
- * @param array $title   标题行名称
- * @param array $data   导出数据
- * @param string $fileName 文件名
- * @param string $savePath 保存路径
- * @param $type   是否下载  false--保存   true--下载
- * @return string   返回文件全路径
- * @throws PHPExcel_Exception
- * @throws PHPExcel_Reader_Exception
- */
 
+//旧版本excel程序
 function oldexportExcel($title=array(), $data=array(), $fileName='', $savePath='./', $isDown=false,$sheetName){
     $obj = new PHPExcel();
     //横向单元格标识
@@ -74,6 +65,18 @@ function oldexportExcel($title=array(), $data=array(), $fileName='', $savePath='
     return $savePath.$fileName.'.xlsx';
 }
 
+//PHP导出Excel
+/**
+ * 数据导出
+ * @param array $title   标题行名称
+ * @param array $data   导出数据
+ * @param string $fileName 文件名
+ * @param string $savePath 保存路径
+ * @param $type   是否下载  false--保存   true--下载
+ * @return string   返回文件全路径
+ * @throws PHPExcel_Exception
+ * @throws PHPExcel_Reader_Exception
+ */
 
 function exportExcel($title=array(), $data=array(), $fileName='', $savePath='./', $isDown=false,$sheetName){
 
